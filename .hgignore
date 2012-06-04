@@ -1,0 +1,12 @@
+syntax: glob
+
+# Python cruft
+*.pyc
+
+# Unix cruft
+*~
+
+# PyCharm Cruft
+.idea/.name
+.idea/workspace.xml
+.idea/dataSources.ids
