@@ -1,3 +1,4 @@
+from datetime import date
 from fabric.api import run, sudo
 
 __all__ = ('run_as', )
@@ -15,3 +16,17 @@ def run_as(command, use_sudo=False, user=None, **kwargs):
         return sudo(command, user=user, **kwargs)
     else:
         return run(command, **kwargs)
+
+def generate_version(revision=None):
+    """
+    Generate a version number based on today's date and an optional revision.
+    
+    Version string is in the format %Y.%m.%d.revision
+    """
+    version = date.today().strftime('%Y.%m.%d')
+    if revision:
+        try:
+            version += '.{0}'.format(int(revision))
+        except ValueError:
+            raise ValueError("Revision must be an integer value.")  
+    return version
