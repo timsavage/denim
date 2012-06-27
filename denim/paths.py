@@ -1,6 +1,6 @@
 import posixpath
 import os.path
-from fabric.api import env, cd, require
+from fabric.api import env, cd, require, abort
 
 
 ## Utils ####################
@@ -9,7 +9,10 @@ def join_paths(a, *p):
     """
     Joins multiple paths land ensures that the '/' is removed from the end.
 
+    Any path in *p that starts with / will be have the / removed.
+
     """
+    p = map(lambda i: i.lstrip('/'), p)
     return posixpath.join(a, *p).rstrip('/')
 
 
@@ -49,8 +52,10 @@ def get_log_path():
     Path to log files.
 
     """
-    require('log_path_template', 'project_name', 'package_name')
-    return env.log_path_template % env
+    require('project_name', 'package_name')
+    log_path_template = env.get('log_path_template',
+        '/var/log/webapps/%(project_name)s/%(package_name)s')
+    return log_path_template % env
 
 def get_wsgi_socket():
     """
@@ -62,7 +67,7 @@ def get_wsgi_socket():
 
 ## Local paths ##############
 
-def get_config_file_names(name_prefix=None):
+def get_local_config_file_names(name_prefix=None):
     """
     Get names of config files.
 
@@ -84,7 +89,9 @@ def get_local_path(sub_path=None):
     :sub_path: local sub path relative to current fabfile.
 
     """
-    return os.path.join(env.real_fabfile, sub_path if sub_path else '')
+    if not env.real_fabfile:
+        abort('real_fabfile is required.')
+    return os.path.join(env.real_fabfile, sub_path if sub_path else '').rstrip('/')
 
 def get_local_config_path(service_name, name_prefix=None):
     """
@@ -102,7 +109,7 @@ def get_local_config_path(service_name, name_prefix=None):
     :name_prefix: an optional prefix for the configuration file name.
     """
     require('real_fabfile')
-    return os.path.join(env.real_fabfile, 'conf', get_config_file_names(name_prefix)[0])
+    return os.path.join(env.real_fabfile, 'conf', service_name, get_local_config_file_names(name_prefix)[0])
 
 
 ## Context managers #########
