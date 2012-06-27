@@ -11,7 +11,7 @@ def _get_deploy_config(name_prefix, enabled=False):
 
 
 def upload_config(name_prefix=None):
-    source = denim.paths.get_local_path('conf/nginx/%(deploy_env)s.conf')
+    source = denim.paths.get_local_path('conf/nginx/%(deploy_env)s.conf' % env)
     target = denim.paths.join_paths('/etc/supervisor/conf.d', '%(project_name)s.conf' % env)
     put(source, target, use_sudo=True)
 
