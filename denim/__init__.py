@@ -97,15 +97,7 @@ Development
 -----------
 
 +--------------------------------+--------------------------------+
-| conf                           | Configuration                  |
-+-+------------------------------+--------------------------------+
-| | init.d                       | Startup scripts for init.d     |
-+-+------------------------------+--------------------------------+
-| | nginx                        | Nginx configuration            |
-+-+-+----------------------------+--------------------------------+
-|   | nginx.*deploy_env*.conf    | Environment configuration [4]_ |
-+---+----------------------------+--------------------------------+
-| src                            | Source root                    |
+| app                            | Application source root        |
 +-+------------------------------+--------------------------------+
 | | *package_name*               | Application package [5]_       |
 +-+-+----------------------------+--------------------------------+
@@ -115,6 +107,14 @@ Development
 +-+---+--------------------------+--------------------------------+
 | | requirements.txt             | PIP requirements file          |
 +-+------------------------------+--------------------------------+
+| conf                           | Configuration                  |
++-+------------------------------+--------------------------------+
+| | init.d                       | Startup scripts for init.d     |
++-+------------------------------+--------------------------------+
+| | nginx                        | Nginx configuration            |
++-+-+----------------------------+--------------------------------+
+|   | nginx.*deploy_env*.conf    | Environment configuration [4]_ |
++---+----------------------------+--------------------------------+
 | fabfile.py                     | Project fabric definition file |
 +-+------------------------------+--------------------------------+
 
@@ -126,6 +126,7 @@ from fabric.api import *
 from paths import cd_deploy, cd_package, cd_log, get_deploy_path, get_package_path, get_log_path
 import webserver
 import scm
+import default
 
 # Defaults
 env.deploy_user = 'webapps'

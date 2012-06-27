@@ -29,5 +29,14 @@ Django specific items
 """
 
 def standard_provision():
+    """
+
+    """
     pass
 
+
+def standard_deploy(revision):
+    """
+
+    """
+    pass
