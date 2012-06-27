@@ -126,7 +126,9 @@ from fabric.api import *
 from paths import cd_deploy, cd_package, cd_log, get_deploy_path, get_package_path, get_log_path
 import webserver
 import scm
-import default
+import defaults
+
+__version__ = (0, 1, 0, 'alpha', 0)
 
 # Defaults
 env.deploy_user = 'webapps'

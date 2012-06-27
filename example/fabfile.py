@@ -32,8 +32,8 @@ def staging():
 
 @task
 def provision():
-    default.standard_provision()
+    defaults.standard_provision()
 
 @task(alias='d')
 def deploy(revision):
-    default.standard_deploy(revision)
+    defaults.standard_deploy(revision)
