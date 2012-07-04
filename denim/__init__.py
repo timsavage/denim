@@ -123,7 +123,7 @@ Development
 
 """
 from fabric.api import *
-from paths import cd_deploy, cd_package, cd_log, get_deploy_path, get_package_path, get_log_path
+from paths import cd_deploy, cd_package, deploy_path, package_path
 import webserver
 import scm
 import defaults
@@ -132,7 +132,3 @@ __version__ = (0, 1, 0, 'alpha', 0)
 
 # Defaults
 env.deploy_user = 'webapps'
-
-# Paths
-env.deploy_path = '/opt/webapps'
-env.log_path_template = '/var/log/%(project_name)s/%(package_name)s'

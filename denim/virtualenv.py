@@ -15,7 +15,7 @@ def create(path=None, use_sudo=True, user=None):
 
     """
     if not path:
-        path = paths.get_deploy_path()
+        path = paths.deploy_path()
     utils.run_as('virtualenv %s' % path, use_sudo=use_sudo, user=user)
 
 def activate(path=None):
@@ -26,5 +26,5 @@ def activate(path=None):
 
     """
     if not path:
-        path = paths.get_deploy_path()
+        path = paths.deploy_path()
     return prefix('source %s' % paths.join_paths(path, 'bin/activate'))

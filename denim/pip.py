@@ -13,5 +13,5 @@ def install_requirements(path_to_requirements=None, revision=None, use_sudo=Fals
 
     """
     if not path_to_requirements:
-        path_to_requirements = paths.get_package_path(revision, 'requirements.txt')
+        path_to_requirements = paths.package_path(revision, 'requirements.txt')
 

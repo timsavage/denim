@@ -8,8 +8,8 @@ def create_default_layout():
     Create default deployment layout.
 
     """
-    deploy_path = paths.get_deploy_path()
-    log_path = paths.get_log_path()
+    deploy_path = paths.deploy_path()
+    log_path = paths.log_path()
 
     # Create paths
     sudo('mkdir -p %s{app,public,var}' % deploy_path)
