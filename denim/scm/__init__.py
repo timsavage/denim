@@ -1,9 +1,10 @@
+# -*- encoding:utf8 -*-
 from denim._env_proxy import Proxy
 
 
 __proxy = Proxy('deploy_scm', globals(), 'hg')
 
-archive = __proxy.method('tag_release', True, doc=
+tag_release = __proxy.method('tag_release', True, doc=
 """
 Add a tag to a GIT repository for a release.
 
