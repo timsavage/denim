@@ -7,6 +7,7 @@ Provision
 
 - Create system user
 - Create folder layout
+- Create virtual env
 - Deploy web-server configuration
 - Test web-server configuration
 - Reload web-server configuration
@@ -28,16 +29,33 @@ Django specific items
 - Symlink new release as current
 
 """
+from denim import deploy, webserver, virtualenv, pip, provision, system
+
 
 def standard_provision():
     """
 
     """
-    pass
+    # Layout
+    system.create_system_user()
+    provision.create_default_layout()
+    virtualenv.create()
+
+    # Web server
+    webserver.upload_config()
+    webserver.enable_config()
+    webserver.test_config()
+    webserver.reload()
+
+    # Process control
+
 
 
 def standard_deploy(revision):
     """
 
     """
-    pass
+    deploy.archive_and_upload(revision)
+    with virtualenv.activate():
+        pip.install_requirements(revision, use_sudo=True)
+
