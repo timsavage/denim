@@ -51,9 +51,9 @@ class Proxy(object):
         """
         Define a method.
 
-        :name: name of the method to proxy.
-        :doc: doc string to use when proxying method.
-        :task: apply fabric @task decorator to method.
+        :param name: name of the method to proxy.
+        :param task: apply fabric @task decorator to method.
+        :param doc: doc string to use when proxying method.
         """
         self._methods.add(name)
         proxy = MethodProxy(self, name, doc)
@@ -61,6 +61,10 @@ class Proxy(object):
             return api.task(proxy)
         else:
             return proxy
+
+    def local_method(self, method):
+        self._methods.add(method.__name__)
+        return method
 
     @property
     def methods(self):
