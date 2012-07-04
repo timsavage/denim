@@ -1,3 +1,4 @@
+# -*- encoding:utf8 -*-
 import posixpath
 import os.path
 from fabric.api import env, cd, require, abort
