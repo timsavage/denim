@@ -3,7 +3,7 @@ from denim import paths, utils
 __all__ = ('install_requirements', )
 
 
-def install_requirements(path_to_requirements=None, revision=None, *args, **kwargs):
+def install_requirements(path_to_requirements=None, revision=None, use_sudo=True, user=None):
     """
     Install requirements with PIP.
 
@@ -16,5 +16,4 @@ def install_requirements(path_to_requirements=None, revision=None, *args, **kwar
     """
     if not path_to_requirements:
         path_to_requirements = paths.package_path(revision, 'requirements.txt')
-
-    utils.run_as('pip install -r %s' % path_to_requirements, *args, **kwargs)
+    utils.run_as('pip install -r %s' % path_to_requirements, use_sudo, user)
