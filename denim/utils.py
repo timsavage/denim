@@ -20,17 +20,17 @@ def run_as(command, use_sudo=False, user=None, **kwargs):
         return run(command, **kwargs)
 
 
-def generate_version(revision=None):
+def generate_version(increment=None):
     """
-    Generate a version number based on today's date and an optional revision.
+    Generate a version number based on today's date and an optional increment.
 
-    Version string is in the format %Y.%m.%d.revision.
+    Version string is in the format %Y.%m.%d.increment.
 
     """
     version = date.today().strftime('%Y.%m.%d')
-    if revision:
+    if increment:
         try:
-            version += '.{0}'.format(int(revision))
+            version += '.{0}'.format(int(increment))
         except ValueError:
-            raise ValueError("Revision must be an integer value.")
+            raise ValueError("Increment must be an integer value.")
     return version
