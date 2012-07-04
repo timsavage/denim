@@ -1,4 +1,6 @@
 from denim import *
+from denim import defaults
+
 
 ## Configuration ######################
 
