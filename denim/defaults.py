@@ -1,3 +1,4 @@
+# -*- encoding:utf8 -*-
 """
 The default provision and deployment strategy.
 
@@ -6,9 +7,9 @@ Provision
 
 - Create system user
 - Create folder layout
-- Deploy webserver configuration
-- Test webserver configuration
-- Reload webserver configuration
+- Deploy web-server configuration
+- Test web-server configuration
+- Reload web-server configuration
 - Initial deployment
 - Deploy init scripts
 

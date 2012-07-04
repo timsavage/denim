@@ -1,5 +1,5 @@
 from fabric.api import run, sudo, env
-import paths
+from denim import paths
 
 
 def install_requirements(path_to_requirements=None, revision=None, use_sudo=False, user=None):
