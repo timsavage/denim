@@ -1,3 +1,4 @@
+# -*- encoding:utf8 -*-
 """
 Methods for managing configuration and web-server processes.
 
