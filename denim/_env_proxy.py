@@ -1,3 +1,4 @@
+# -*- encoding:utf8 -*-
 from fabric import api
 
 
@@ -17,8 +18,9 @@ class MethodProxy(object):
 
 class Proxy(object):
     """
-    Class to automate the proxying of modules. This is used so to allow projects to specify what tools they use
-    within a project ie: Define the source control as GIT.
+    Class to automate the proxying of modules. This is used so to allow
+    projects to specify what tools they use within a project ie: Define the
+    source control as GIT.
     """
     def __init__(self, key, globals, default=None):
         self.key = key
@@ -37,7 +39,8 @@ class Proxy(object):
         module = self._module_cache.get(module_name)
         if not module:
             try:
-                module = __import__(module_name, globals=self._globals, fromlist=self.methods)
+                module = __import__(module_name, globals=self._globals,
+                    fromlist=self.methods)
             except ImportError:
                 api.abort('The following module defined in the environment variable "%s" does not exist: %s' % (self.key, module_name))
             else:
