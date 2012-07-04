@@ -1,3 +1,4 @@
+# -*- encoding:utf8 -*-
 """::
 
       _/_/_/                        _/
@@ -126,7 +127,6 @@ from fabric.api import *
 from paths import cd_deploy, cd_package, deploy_path, package_path
 import webserver
 import scm
-import defaults
 
 __version__ = (0, 1, 0, 'alpha', 0)
 
