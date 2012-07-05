@@ -13,4 +13,6 @@ syntax: glob
 
 # Project artifacts
 MANIFEST
+build*
 dist*
+*.egg-info
