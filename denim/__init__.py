@@ -124,11 +124,11 @@ Development
 
 """
 from fabric.api import *
-from paths import cd_deploy, cd_package, deploy_path, package_path
-import webserver
-import scm
-
-__version__ = (0, 1, 0, 'alpha', 0)
 
 # Defaults
 env.deploy_user = 'webapps'
+
+from denim.paths import (cd_deploy, cd_package, deploy_path, package_path)
+from denim import (provisioning, scm, system, virtualenv, webserver)
+
+__version__ = (0, 1, 0, 'alpha', 0)
