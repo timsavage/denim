@@ -1,7 +1,7 @@
 # -*- encoding:utf8 -*-
 from fabric.api import env, sudo, run, settings, hide
 from fabric.contrib import files
-from denim import utils
+from denim import paths, utils
 
 
 def user_exists(user=None):
@@ -37,7 +37,7 @@ def create_system_user(user=env.deploy_user, home=None):
     """
     if not user_exists(user):
         sudo('adduser --system --quiet --home %(home)s %(user)s' % {
-            'home': home if home else env.deploy_path,
+            'home': home if home else paths.deploy_path(),
             'user': user
         })
         return True
