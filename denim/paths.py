@@ -164,7 +164,8 @@ def local_config_file_options(service_name, name_prefix=None,
         ]
 
 
-def local_config_file(service_name, name_prefix=None, extension='.conf'):
+def local_config_file(service_name, name_prefix=None, abort_if_not_found=True,
+                      extension='.conf'):
     """
     Determine the correct local config file, this method will try several
     options as resolved by `local_config_file_options` and return the path to
@@ -172,6 +173,8 @@ def local_config_file(service_name, name_prefix=None, extension='.conf'):
 
     :param service_name: name of the service the configuration files is for.
     :param name_prefix: an optional prefix for the configuration file name.
+    :param abort_if_not_found: abort fabric operation if the requested file
+        could not be found.
     :param extension: file extension of config files.
 
     """
@@ -179,6 +182,12 @@ def local_config_file(service_name, name_prefix=None, extension='.conf'):
     for file_option in file_options:
         if os.path.exists(file_option):
             return file_option
+    if abort_if_not_found:
+        abort("""
+Not able to find a configuration file for service "%s".
+
+Searched path: %s
+""" % (service_name, file_options))
 
 
 ## Context managers #########
