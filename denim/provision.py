@@ -1,7 +1,8 @@
-# -*- encoding:utf8 -*-
+# -*- encoding:utf8 *-*
 from fabric.api import *
-from denim import paths
-from denim import system
+from denim import paths, system
+
+__all__ = ('create_default_layout',)
 
 
 def create_default_layout():

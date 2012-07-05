@@ -1,10 +1,13 @@
 # -*- encoding:utf8 -*-
-from fabric.api import task, local
-from denim.utils import generate_version
+from fabric.api import local, env
 
 
-def tag_release(revision='0'):
-  version = generate_version(revision)
-  local('git tag -a -m "Release {0}" release-{0}'.format(version))
-  print('Tagged version:\t{0}\nRelease tag:\trelease-{0}'.format(version))
-  return version
+def tag(version):
+    local('git tag -a -m "Release {0}" release-{0}'.format(version))
+
+
+def archive(revision, out_file, sub_path, prefix=None):
+    args = []
+    if prefix:
+        args.append('--prefix=' + prefix)
+    local('git archive --format=tar %s %s %s > %s' % (' '.join(args), revision, sub_path, out_file))

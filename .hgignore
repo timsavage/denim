@@ -10,3 +10,7 @@ syntax: glob
 .idea/.name
 .idea/workspace.xml
 .idea/dataSources.ids
+
+# Project artifacts
+MANIFEST
+dist*

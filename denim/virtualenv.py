@@ -1,7 +1,7 @@
 # -*- encoding:utf8 -*-
 from fabric.api import prefix
-import utils
-import paths
+from denim import utils
+from denim import paths
 
 __all__ = ('create', 'activate')
 
