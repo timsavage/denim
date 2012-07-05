@@ -13,7 +13,7 @@ class MethodProxy(object):
 
     def __call__(self, *args, **kwargs):
         module = self.proxy.get_env_module()
-        getattr(module, self.__name__)(*args, **kwargs)
+        return getattr(module, self.__name__)(*args, **kwargs)
 
 
 class Proxy(object):
