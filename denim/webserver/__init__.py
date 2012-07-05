@@ -11,6 +11,7 @@ Options:
 - apache
 
 """
+from fabric.api import abort
 from denim._env_proxy import Proxy
 
 
@@ -80,5 +81,26 @@ Reload web-server
 :check_config: check that web-servers configuration is correct before restarting.
 
 """)
+
+@__proxy.local_method
+def install_config(name_prefix=None, disable_on_fail=True, abort_on_fail=True):
+    """
+    Install/enable and test configuration.
+
+    :param name_prefix: name prefix for configuration.
+    :param disable_on_fail: disable the configuration file on failure.
+    :param abort_on_fail: abort script on failure.
+    """
+    upload_config(name_prefix)
+    enable_config(name_prefix)
+    result = test_config()
+    print result
+    if result:
+        reload(check_config=False)
+    else:
+        if disable_on_fail:
+            disable_config(name_prefix)
+        if abort_on_fail:
+            abort('Web server configuration test failed.')
 
 __all__ = __proxy.methods

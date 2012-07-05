@@ -29,7 +29,12 @@ def disable_config(name_prefix=None):
 
 
 def test_config():
-    sudo('/usr/sbin/nginx -t')
+    with settings(
+         hide('warnings', 'running'),
+         warn_only=True
+    ):
+        result = sudo('/usr/sbin/nginx -t')
+        return result.succeeded
 
 
 def start():
