@@ -1,5 +1,5 @@
 from denim import *
-from denim import defaults
+from denim import recipes
 
 
 ## Configuration ######################
@@ -21,11 +21,17 @@ env.package_name = 'denim_demo'
 
 @task(alias='prod')
 def production():
+    """
+    Environment configuration for production.
+    """
     env.deploy_env = 'production'
     env.hosts = ['192.168.1.10', '192.168.1.12']
 
 @task
 def staging():
+    """
+    Environment configuration for staging.
+    """
     env.deploy_env = 'staging'
     env.hosts = ['192.168.2.10', '192.168.2.12']
 
@@ -34,8 +40,8 @@ def staging():
 
 @task
 def provision():
-    defaults.standard_provision()
+    recipes.standard_provision()
 
 @task(alias='d')
 def deploy(revision):
-    defaults.standard_deploy(revision)
+    recipes.standard_deploy(revision)
