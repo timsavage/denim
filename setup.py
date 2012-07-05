@@ -1,5 +1,8 @@
-from distutils.core import setup
+import os
+from setuptools import setup
 
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
     name='denim',
@@ -7,7 +10,8 @@ setup(
     url='http://bitbucket.org/timsavage/denim',
     author='Tim Savage',
     author_email='tim.savage@poweredbypenguins.org',
-    description='A Fabric_ deployment strategy for Python web applications.',
+    description='A Fabric deployment strategy for Python web applications.',
+    long_description=read('README.rst'),
     packages=[
         'denim',
         'denim.process_control',
@@ -16,7 +20,7 @@ setup(
     ],
     requires=['fabric'],
     classifiers=[
-        'Development Status :: 5 - Alpha',
+        'Development Status :: 3 - Alpha',
         'Framework :: Fabric',
     ]
 )
