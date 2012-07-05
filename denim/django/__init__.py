@@ -1,16 +1,21 @@
 # -*- encoding:utf8 -*-
-from fabric.api import env, require
+from fabric.api import env, require, task
 from denim import paths, system, utils
 
 
 def manage(cmd, args='', revision=None, noinput=True, use_sudo=True, user=None):
     """
     Run a django manage.py command.
+
+    :param cmd: the command to run.
+    :param args: arguments to append.
+    :param revision: version name that is being worked on.
+    :param noinput: Do not ask for input.
     """
     with paths.cd_package(revision):
         utils.run_as('python manage.py %(cmd)s %(args)s' % {
             'cmd': cmd,
-            'args': args + (' --noinput' if noinput else '')
+            'args': (' --noinput' if noinput else '') + args
         }, use_sudo, user)
 
 
@@ -26,6 +31,14 @@ def syncdb(noinput=True, revision=None, use_sudo=True, user=None):
     Run a database sync
     """
     manage('syncdb', revision, noinput, use_sudo, user)
+
+
+@task
+def createsuperuser():
+    """
+    Run a database sync and migrate operation.
+    """
+    manage('createsuperuser', noinput=False)
 
 
 def link_settings(revision=None, use_sudo=True, user=None):
