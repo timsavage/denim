@@ -1,6 +1,6 @@
 # -*- encoding:utf8 -*-
 """
-The default provision and deployment strategy.
+Common deployment recipes.
 
 Provision
 =========
@@ -29,7 +29,27 @@ Django specific items
 - Symlink new release as current
 
 """
-from denim import deploy, webserver, virtualenv, pip, provision, system
+from fabric.api import sudo
+from denim import deploy, paths, pip, system, virtualenv, webserver
+
+
+def create_standard_layout():
+    """
+    Create standard deployment layout.
+
+    """
+    deploy_path = paths.deploy_path()
+    log_path = paths.log_path()
+
+    # Create paths
+    sudo('mkdir -p %s{app,public,var}' % deploy_path)
+    sudo('mkdir -p %spublic/{media,static}' % deploy_path)
+    sudo('mkdir -p %s' % log_path)
+
+    # Set correct user for application writable paths.
+    system.change_owner(paths.join_paths(deploy_path, 'var'))
+    system.change_owner(paths.join_paths(deploy_path, 'public/media'))
+    system.change_owner(log_path)
 
 
 def standard_provision():
@@ -38,7 +58,7 @@ def standard_provision():
     """
     # Layout
     system.create_system_user()
-    provision.create_default_layout()
+    create_standard_layout()
     virtualenv.create()
 
     # Web server
