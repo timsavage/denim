@@ -100,11 +100,11 @@ Development
 +--------------------------------+--------------------------------+
 | app                            | Application source root        |
 +-+------------------------------+--------------------------------+
-| | *package_name*               | Application package [5]_       |
+| | *package_name*               | Application package [4]_       |
 +-+-+----------------------------+--------------------------------+
 |   | deployment                 | Deployment settings folder     |
 +---+-+--------------------------+--------------------------------+
-|     | settings.*deploy_env*.py | Environment configuration [4]_ |
+|     | settings.*deploy_env*.py | Environment configuration [5]_ |
 +-+---+--------------------------+--------------------------------+
 | | requirements.txt             | PIP requirements file          |
 +-+------------------------------+--------------------------------+
@@ -114,13 +114,13 @@ Development
 +-+------------------------------+--------------------------------+
 | | nginx                        | Nginx configuration            |
 +-+-+----------------------------+--------------------------------+
-|   | nginx.*deploy_env*.conf    | Environment configuration [4]_ |
+|   | nginx.*deploy_env*.conf    | Environment configuration [5]_ |
 +---+----------------------------+--------------------------------+
 | fabfile.py                     | Project fabric definition file |
 +-+------------------------------+--------------------------------+
 
-.. [4] Used to apply specific configuration based on deployment environment.
-.. [5] This structure is based on Django 1.4.
+.. [4] This structure is based on Django 1.4.
+.. [5] Used to apply specific configuration based on deployment environment.
 
 """
 from fabric.api import *
