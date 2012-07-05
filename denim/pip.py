@@ -1,3 +1,4 @@
+from fabric.api import env
 from denim import paths, utils
 
 __all__ = ('install_requirements', )
@@ -16,4 +17,7 @@ def install_requirements(path_to_requirements=None, revision=None, use_sudo=True
     """
     if not path_to_requirements:
         path_to_requirements = paths.package_path(revision, 'requirements.txt')
-    utils.run_as('pip install -r %s' % path_to_requirements, use_sudo, user)
+    if env.has_key('proxy'):
+        utils.run_as('pip install --proxy=%s -r %s' % (env.proxy, path_to_requirements), use_sudo, user)
+    else:
+        utils.run_as('pip install -r {0}'.format(requirements_file))
