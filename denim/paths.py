@@ -186,7 +186,7 @@ def local_config_file(service_name, name_prefix=None, abort_if_not_found=True,
         abort("""
 Not able to find a configuration file for service "%s".
 
-Searched path: %s
+Searched path(s): %s
 """ % (service_name, file_options))
 
 

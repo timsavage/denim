@@ -36,14 +36,13 @@ from denim import deploy, paths, pip, system, virtualenv, webserver
 def create_standard_layout():
     """
     Create standard deployment layout.
-
     """
     deploy_path = paths.deploy_path()
     log_path = paths.log_path()
 
     # Create paths
-    sudo('mkdir -p %s{app,public,var}' % deploy_path)
-    sudo('mkdir -p %spublic/{media,static}' % deploy_path)
+    sudo('mkdir -p %s/{app,public,var}' % deploy_path)
+    sudo('mkdir -p %s/public/{media,static}' % deploy_path)
     sudo('mkdir -p %s' % log_path)
 
     # Set correct user for application writable paths.
