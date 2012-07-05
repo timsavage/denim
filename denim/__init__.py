@@ -129,6 +129,6 @@ from fabric.api import *
 env.deploy_user = 'webapps'
 
 from denim.paths import (cd_deploy, cd_package, deploy_path, package_path)
-from denim import (provisioning, scm, system, virtualenv, webserver)
+from denim import (scm, system, virtualenv, webserver)
 
 __version__ = (0, 1, 0, 'alpha', 0)
