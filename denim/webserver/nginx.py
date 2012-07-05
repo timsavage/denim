@@ -10,20 +10,22 @@ def upload_config(name_prefix=None):
     put(
         paths.local_config_file(SERVICE_NAME, name_prefix),
         paths.remote_config_file('/etc/nginx/sites-available', name_prefix),
-        use_sudo=True
+        use_sudo=True,
     )
-
 
 def enable_config(name_prefix=None):
     system.create_symlink(
         paths.remote_config_file('/etc/nginx/sites-available', name_prefix),
         paths.remote_config_file('/etc/nginx/sites-enabled', name_prefix),
+        use_sudo=True,
     )
 
 
 def disable_config(name_prefix=None):
     system.remove_file(
-        paths.remote_config_file('/etc/nginx/sites-enabled', name_prefix))
+        paths.remote_config_file('/etc/nginx/sites-enabled', name_prefix),
+        use_sudo=True,
+    )
 
 
 def test_config():
