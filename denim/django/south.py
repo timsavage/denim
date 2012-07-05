@@ -9,7 +9,8 @@ def show_migrations(non_applied_only=False, revision=None):
     """
     Print report of migrations.
 
-    :param non_applied_only: Only show un-applied migrations.
+    :param non_applied_only: only show un-applied migrations.
+    :param revision: revision of the application to run show migrations from.
     """
     if non_applied_only:
         result = manage('migrate', args='--list | grep -v "(\*)"', revision=revision, use_sudo=False)
