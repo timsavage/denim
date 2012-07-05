@@ -29,7 +29,7 @@ Django specific items
 - Symlink new release as current
 
 """
-from fabric.api import sudo
+from fabric.api import sudo, require
 from denim import deploy, paths, pip, system, virtualenv, webserver
 
 
@@ -53,27 +53,28 @@ def create_standard_layout():
 
 def standard_provision():
     """
-
+    Standard provisioning recipe.
     """
+    require('project_name', 'package_name', 'deploy_env')
+
     # Layout
     system.create_system_user()
     create_standard_layout()
     virtualenv.create()
 
-    # Web server
-    webserver.upload_config()
-    webserver.enable_config()
-    webserver.test_config()
-    webserver.reload()
-
-    # Process control
+    # Configuration
+    webserver.install_config()
 
 
 
 def standard_deploy(revision):
     """
-
+    Standard deployment recipe.
     """
+    require('project_name', 'package_name', 'deploy_env')
+
+
+
     deploy.archive_and_upload(revision)
     with virtualenv.activate():
         pip.install_requirements(revision, use_sudo=True)
