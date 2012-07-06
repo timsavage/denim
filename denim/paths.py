@@ -1,6 +1,6 @@
 # -*- encoding:utf8 -*-
 import posixpath
-import os.path
+import os
 from fabric.api import env, cd, require, abort
 
 
@@ -112,6 +112,31 @@ def local_path(sub_path=None):
     require('real_fabfile')
     fabfile_path = os.path.dirname(env.real_fabfile)
     return join_local_paths(fabfile_path, sub_path if sub_path else '')
+
+
+def local_working_path(sub_path=None, file_name=None, ensure_exists=True):
+    """
+    Path to a local working path.
+
+    This path can be changed from the default `den` via the fabric environment
+    parameter `working_path`.
+
+    :param sub_path: sub path within working directory.
+    :param file_name: optional file name within directory (this is a separate
+        option to allow the `ensure_exists` flag to work correctly).
+    :param ensure_exists: ensures that the path exists.
+
+    """
+    path = local_path(env.get('working_path', 'den'))
+    if sub_path:
+        path = join_local_paths(path, sub_path)
+    if ensure_exists and not os.path.exists(path):
+        os.makedirs(path)
+
+    if file_name:
+        return join_local_paths(path, file_name)
+    else:
+        return path
 
 
 def local_config_file_options(service_name, name_prefix=None,

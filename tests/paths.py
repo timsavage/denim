@@ -1,3 +1,4 @@
+# -*- encoding:utf8 -*-
 import unittest
 import os
 from fabric import api
@@ -228,6 +229,47 @@ class LocalPathTestCase(PathTestCaseBase):
         )
 
 
+class LocalWorkingPathTestCase(PathTestCaseBase):
+    def setUp(self):
+        # Clean up test folder as this test creates stuff.
+        try:
+            os.removedirs(self.make_local_path('den/foo'))
+        except OSError:
+            pass
+
+    def testDefaultPath(self):
+        expected = self.make_local_path('den')
+        self.assertEqual(
+            expected,
+            target.local_working_path()
+        )
+        self.assertTrue(os.path.exists(expected))
+
+    def testSubPath(self):
+        expected = self.make_local_path('den/foo')
+        self.assertEqual(
+            expected,
+            target.local_working_path('foo')
+        )
+        self.assertTrue(os.path.exists(expected))
+
+    def testNoCreate(self):
+        expected = self.make_local_path('den/foo')
+        self.assertEqual(
+            expected,
+            target.local_working_path('foo', ensure_exists=False)
+        )
+        self.assertFalse(os.path.exists(expected))
+
+    def testWithFilename(self):
+        expected = self.make_local_path('den/bar.txt')
+        self.assertEqual(
+            expected,
+            target.local_working_path(file_name='bar.txt')
+        )
+
+
+
 class LocalConfigFileOptionsTestCase(PathTestCaseBase):
     def testDefaultPath(self):
         self.assertEqual(
@@ -277,3 +319,12 @@ class LocalConfigFileTestCase(PathTestCaseBase):
             self.make_local_path('conf/nginx/test.rc'),
             target.local_config_file('nginx', extension='.rc')
         )
+
+    def testNotFound(self):
+        self.assertIsNone(
+            target.local_config_file('supervisor', abort_if_not_found=False)
+        )
+
+    def testAbortIfNotFound(self):
+        self.assertRaises(SystemExit,
+            lambda: target.local_config_file('supervisor'))
