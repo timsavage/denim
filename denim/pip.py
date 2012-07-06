@@ -21,4 +21,4 @@ def install_requirements(path_to_requirements=None, revision=None, use_sudo=True
     if env.has_key('proxy'):
         utils.run_as('pip install --proxy=%s -r %s' % (env.proxy, path_to_requirements), use_sudo, user)
     else:
-        utils.run_as('pip install -r {0}'.format(requirements_file))
+        utils.run_as('pip install -r %s' % path_to_requirements)
