@@ -2,20 +2,6 @@
 from fabric import api
 
 
-class MethodProxy(object):
-    """
-    Class that proxies the actual method.
-    """
-    def __init__(self, proxy, name, doc):
-        self.proxy = proxy
-        self.__name__ = name
-        self.__doc__ = doc
-
-    def __call__(self, *args, **kwargs):
-        method = self.proxy.get_env_method(self.__name__)
-        return method(*args, **kwargs)
-
-
 class Proxy(object):
     """
     Class to automate the proxying of modules. This is used so to allow
@@ -67,13 +53,29 @@ class Proxy(object):
         :param doc: doc string to use when proxying method.
         """
         self._methods.add(name)
-        proxy = MethodProxy(self, name, doc)
+
+        # Method wrapper that does redirection
+        def wrapper(proxy, name):
+            def _proxy(*args, **kwargs):
+                method = proxy.get_env_method(name)
+                return method(*args, **kwargs)
+            return _proxy
+
+        proxy = wrapper(self, name)
+        proxy.__doc__ = doc
+        proxy.__name__ = name
+
         if task:
             return api.task(proxy)
         else:
             return proxy
 
     def local_method(self, method):
+        """
+        Helper for defining local methods (adds to the method array)
+        :param method:
+        :return:
+        """
         self._methods.add(method.__name__)
         return method
 
