@@ -1,3 +1,4 @@
+# -*- encoding:utf8 -*-
 from fabric.api import env
 from denim import paths, utils
 

@@ -94,7 +94,6 @@ def install_config(name_prefix=None, disable_on_fail=True, abort_on_fail=True):
     upload_config(name_prefix)
     enable_config(name_prefix)
     result = test_config()
-    print result
     if result:
         reload(check_config=False)
     else:
