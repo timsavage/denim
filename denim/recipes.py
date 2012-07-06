@@ -31,8 +31,8 @@ Django specific items
 """
 from fabric import colors
 from fabric.api import abort, put, require, sudo
-from denim import (deploy, package, paths, pip, scm, system, utils, virtualenv,
-                   webserver)
+from denim import (deploy, package, paths, pip, service, scm, system, utils,
+                   virtualenv, webserver)
 
 
 # These are the default packages for Nginx, PostgreSQL and Supervisor for
@@ -51,12 +51,15 @@ def archive_and_upload(revision, use_sudo=True, user=None):
     Upload application archive based on a source control revision.
 
     :param revision: revision to deploy.
+    :return: name of the revision that was deployed.
 
     """
-    archive_file = scm.archive_app(revision)
+    archive_file, revision_name = scm.archive_app(revision)
     put(archive_file, '/tmp/%s' % archive_file)
-    with paths.cd('app'):
-        utils.run_as('tar -xzf /tmp/%s' % archive_file, use_sudo, user)
+    with paths.cd_deploy('app'):
+        utils.run_as('tar -xf /tmp/%s' % archive_file, use_sudo, user)
+        utils.run_as('mv app %s' % revision, use_sudo, user)
+    return revision_name
 
 
 def create_standard_layout():
@@ -77,14 +80,14 @@ def create_standard_layout():
     system.change_owner(log_path)
 
 
-def standard_provision(install_packages=True,
-                       required_packages=DEFAULT_PACKAGES):
+def standard_provision(required_packages=DEFAULT_PACKAGES,
+                       install_packages=True):
     """
     Standard provisioning recipe.
 
+    :param required_packages: list of packages that are required on the server.
     :param install_packages: indicates if packages should be installed if they
         are not on the server.
-    :param required_packages: list of packages that are required on the server.
 
     If `install_packages` is `False` and the package is missing provisioning
     will abort.
@@ -107,6 +110,8 @@ def standard_provision(install_packages=True,
     print colors.yellow("* Upload configuration for dependant services.")
     print colors.yellow("** Web server.")
     webserver.install_config()
+    print colors.yellow("** Service control.")
+    service.install_config()
 
 
 def standard_deploy(revision):
@@ -115,9 +120,10 @@ def standard_deploy(revision):
     """
     require('project_name', 'package_name', 'deploy_env')
 
+    print colors.yellow("* Archive and upload requested revision.")
+    deployed_revision = archive_and_upload(revision)
 
-
-    archive_and_upload(revision)
+    print colors.yellow("* Install requirements.")
     with virtualenv.activate():
-        pip.install_requirements(revision, use_sudo=True)
+        pip.install_requirements(revision=deployed_revision, use_sudo=True)
 
