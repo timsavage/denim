@@ -1,3 +1,4 @@
+# -*- encoding:utf8 -*-
 from fabric.api import sudo
 from denim import utils
 
