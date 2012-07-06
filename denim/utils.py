@@ -36,7 +36,7 @@ def generate_version(increment=None):
     return version
 
 
-def run_test(command, hide_groups=('warning'), use_sudo=False, user=None):
+def run_test(command, hide_groups=('warnings', ), use_sudo=False, user=None):
     """
     Helper method for performing commands where the result is going to be
     tested. By default fabric will abort when a command returns a non 0 exit
@@ -48,5 +48,6 @@ def run_test(command, hide_groups=('warning'), use_sudo=False, user=None):
     :param user: if using sudo run command as this user; default None (root).
     :return: result of command as returned by `run` or `sudo` Fabric commands.
     """
-    with settings(hide(*hide_groups), warn_only=True):
-        return run_as(command, use_sudo, user)
+    with settings(warn_only=True):
+        with hide(*hide_groups):
+            return run_as(command, use_sudo, user)
