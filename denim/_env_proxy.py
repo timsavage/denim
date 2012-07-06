@@ -12,8 +12,8 @@ class MethodProxy(object):
         self.__doc__ = doc
 
     def __call__(self, *args, **kwargs):
-        module = self.proxy.get_env_module()
-        return getattr(module, self.__name__)(*args, **kwargs)
+        method = self.proxy.get_env_method(self.__name__)
+        return method(*args, **kwargs)
 
 
 class Proxy(object):
@@ -46,6 +46,17 @@ class Proxy(object):
             else:
                 self._module_cache[module_name] = module
         return module
+
+    def get_env_method(self, name):
+        """
+        Get method from module defined in environment.
+        :param name: name of the method.
+        """
+        module = self.get_env_module()
+        try:
+            return getattr(module, self.__name__)
+        except AttributeError:
+            api.abort('The method "%s" is not supported by "%s".' % (name, module.__name__))
 
     def method(self, name, task=False, doc=None):
         """
