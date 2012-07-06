@@ -14,8 +14,9 @@ setup(
     long_description=read('README.rst'),
     packages=[
         'denim',
-        'denim.process_control',
+        'denim.package',
         'denim.scm',
+        'denim.service',
         'denim.webserver',
     ],
     requires=['fabric'],
