@@ -137,6 +137,8 @@ def standard_deploy(revision, use_pip_bundle=False):
         else:
             pip.install_requirements(revision=deployed_revision, use_sudo=True)
 
+        standard_django_deploy(deployed_revision)
+
 
 def standard_django_deploy(revision):
     """
