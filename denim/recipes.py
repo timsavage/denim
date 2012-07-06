@@ -30,7 +30,7 @@ Django specific items
 
 """
 from fabric import colors
-from fabric.api import abort, put, require, sudo
+from fabric.api import abort, prompt, put, require, sudo
 from denim import (package, paths, pip, service, scm, system, utils,
                    virtualenv, webserver)
 
@@ -42,7 +42,9 @@ DEFAULT_PACKAGES = [
     'supervisor', # Process Manager
 
     # Python requirements
-    'python-virtualenv'
+    'python',
+    'python-crypto',
+    'python-virtualenv',
 ]
 
 
@@ -108,9 +110,9 @@ def standard_provision(required_packages=DEFAULT_PACKAGES,
     virtualenv.create()
 
     print colors.yellow("* Upload configuration for dependant services.")
-    print colors.yellow("** Web server.")
+    print colors.blue("** Web server.")
     webserver.install_config()
-    print colors.yellow("** Service control.")
+    print colors.blue("** Service control.")
     service.install_config()
 
 
@@ -118,6 +120,7 @@ def standard_deploy(revision, use_pip_bundle=False):
     """
     Standard deployment recipe.
 
+    :param revision: revision of the app to work on.
     :param use_pip_bundle: Create a pip bundle to install packages.
 
     """
@@ -133,4 +136,37 @@ def standard_deploy(revision, use_pip_bundle=False):
             pip.install_bundle(bundle_file)
         else:
             pip.install_requirements(revision=deployed_revision, use_sudo=True)
+
+
+def standard_django_deploy(revision):
+    """
+    Standard django deployment
+
+    :param revision: revision of the app to work on.
+
+    .. note::
+        This section follows on after the ``standard_deploy``.
+
+    """
+    import django
+    from django import south
+
+    with virtualenv.activate():
+        print colors.yellow("* Setup Django deployment.")
+
+        print colors.blue("** Symlink in environment settings.")
+        django.link_settings(revision)
+
+        print colors.blue("** Collect static assets.")
+        django.collectstatic(revision)
+
+        print colors.blue("** Display unapplied revisions")
+        south.show_migrations(revision, True)
+
+        if prompt("Sync models and apply migrations? (Y|n)", default='Y', validate=r'^[YyNn]$') == 'Y':
+            print colors.blue("** Syncing models")
+            django.syncdb(revision)
+
+            print colors.blue("** Applying migrations")
+            south.migrate(revision)
 

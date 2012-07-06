@@ -26,7 +26,8 @@ def collectstatic(revision=None, noinput=True, use_sudo=True, user=None):
     manage('collectstatic', revision, noinput, use_sudo, user)
 
 
-def syncdb(noinput=True, revision=None, use_sudo=True, user=None):
+@task
+def syncdb(revision=None, noinput=True, use_sudo=True, user=None):
     """
     Run a database sync
     """

@@ -1,19 +1,20 @@
 # -*- encoding:utf8 -*-
-from fabric.api import task
 from fabric import colors
-from denim.django import manage
+from fabric.api import task
+from denim import django
 
 
 @task
-def show_migrations(non_applied_only=False, revision=None):
+def show_migrations(revision=None, non_applied_only=False):
     """
     Print report of migrations.
 
-    :param non_applied_only: only show un-applied migrations.
     :param revision: revision of the application to run show migrations from.
+    :param non_applied_only: only show un-applied migrations.
+
     """
     if non_applied_only:
-        result = manage('migrate', args='--list | grep -v "(\*)"', revision=revision, use_sudo=False)
+        result = django.manage('migrate', args='--list | grep -v "(\*)"', revision=revision, use_sudo=False)
         if result.find('( )') != -1:
             print(colors.red('*'*34))
             print(colors.red('* Migrations need to be applied! *'))
@@ -21,4 +22,15 @@ def show_migrations(non_applied_only=False, revision=None):
         else:
             print(colors.green('Migrations up to date.'))
     else:
-        manage('migrate', '--list', revision=revision, use_sudo=False)
+        django.manage('migrate', '--list', revision=revision, use_sudo=False)
+
+
+@task
+def migrate(revision=None):
+    """
+    Apply migrations.
+
+    :param revision: revision of the application to run show migrations from.
+
+    """
+    django.manage('migrate', revision=revision, use_sudo=False)
