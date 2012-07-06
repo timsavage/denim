@@ -52,41 +52,49 @@ def manager_reload():
     sudo('supervisorctl reread')
 
 
-def start(service_name):
+def start(service_name=None):
     """
     Start process.
 
     :param service_name: name of the service to start in supervisor.
 
     """
+    if not service_name:
+        service_name = env.project_name
     sudo('supervisorctl start %s' % service_name)
 
 
-def stop(service_name):
+def stop(service_name=None):
     """
     Stop process.
 
     :param service_name: name of the service to stop in supervisor.
 
     """
+    if not service_name:
+        service_name = env.project_name
     sudo('supervisorctl start %s' % service_name)
 
 
-def restart(service_name):
+def restart(service_name=None):
     """
     Restart process.
 
     :param service_name: name of the service to restart in supervisor.
 
     """
+    if not service_name:
+        service_name = env.project_name
     sudo('supervisorctl restart %s' % service_name)
 
 
-def status(service_name):
+def status(service_name=None):
     """
     Process status.
 
     :param service_name: name of the service to get status of.
 
     """
+    if service_name is None:
+        service_name = env.project_name
     sudo('supervisorctl status %s' % service_name)
