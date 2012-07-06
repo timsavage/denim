@@ -1,7 +1,6 @@
 # -*- encoding:utf8 -*-
 from fabric.api import *
-from denim import paths
-from denim import system
+from denim import (paths, system, utils)
 
 SERVICE_NAME = 'nginx'
 
@@ -29,12 +28,8 @@ def disable_config(name_prefix=None):
 
 
 def test_config():
-    with settings(
-         hide('warnings', 'running'),
-         warn_only=True
-    ):
-        result = sudo('/usr/sbin/nginx -t')
-        return result.succeeded
+    result = utils.run_test('/usr/sbin/nginx -t', use_sudo=True)
+    return result.succeeded
 
 
 def start():

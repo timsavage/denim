@@ -1,6 +1,6 @@
 # -*- encoding:utf8 -*-
 from datetime import date
-from fabric.api import run, sudo
+from fabric.api import run, sudo, settings, hide
 
 __all__ = ('run_as', 'generate_version')
 
@@ -34,3 +34,19 @@ def generate_version(increment=None):
         except ValueError:
             raise ValueError("Increment must be an integer value.")
     return version
+
+
+def run_test(command, hide_groups=('warning'), use_sudo=False, user=None):
+    """
+    Helper method for performing commands where the result is going to be
+    tested. By default fabric will abort when a command returns a non 0 exit
+    code.
+
+    :param command: command to run.
+    :param hide_groups: output groups to hide (by default hides warnings).
+    :param use_sudo: run this command with sudo; default is False.
+    :param user: if using sudo run command as this user; default None (root).
+    :return: result of command as returned by `run` or `sudo` Fabric commands.
+    """
+    with settings(hide(*hide_groups), warn_only=True):
+        return run_as(command, use_sudo, user)
