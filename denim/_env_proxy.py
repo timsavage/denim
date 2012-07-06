@@ -54,7 +54,7 @@ class Proxy(object):
         """
         module = self.get_env_module()
         try:
-            return getattr(module, self.__name__)
+            return getattr(module, name)
         except AttributeError:
             api.abort('The method "%s" is not supported by "%s".' % (name, module.__name__))
 
