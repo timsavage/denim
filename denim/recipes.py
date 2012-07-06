@@ -31,7 +31,7 @@ Django specific items
 """
 from fabric import colors
 from fabric.api import abort, put, require, sudo
-from denim import (deploy, package, paths, pip, service, scm, system, utils,
+from denim import (package, paths, pip, service, scm, system, utils,
                    virtualenv, webserver)
 
 
@@ -89,8 +89,8 @@ def standard_provision(required_packages=DEFAULT_PACKAGES,
     :param install_packages: indicates if packages should be installed if they
         are not on the server.
 
-    If `install_packages` is `False` and the package is missing provisioning
-    will abort.
+    If `install_packages` is `False` and a package is missing provisioning will
+    abort.
     """
     require('project_name', 'package_name', 'deploy_env')
 
@@ -114,16 +114,23 @@ def standard_provision(required_packages=DEFAULT_PACKAGES,
     service.install_config()
 
 
-def standard_deploy(revision):
+def standard_deploy(revision, use_pip_bundle=False):
     """
     Standard deployment recipe.
+
+    :param use_pip_bundle: Create a pip bundle to install packages.
+
     """
     require('project_name', 'package_name', 'deploy_env')
 
     print colors.yellow("* Archive and upload requested revision.")
     deployed_revision = archive_and_upload(revision)
 
-    print colors.yellow("* Install requirements.")
     with virtualenv.activate():
-        pip.install_requirements(revision=deployed_revision, use_sudo=True)
+        print colors.yellow("* Install requirements.")
+        if use_pip_bundle:
+            bundle_file = pip.create_bundle_from_revision(deployed_revision)
+            pip.install_bundle(bundle_file)
+        else:
+            pip.install_requirements(revision=deployed_revision, use_sudo=True)
 
