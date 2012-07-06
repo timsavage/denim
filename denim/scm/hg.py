@@ -52,4 +52,4 @@ def get_revision_name(revision):
     revisions that are not unique (eg "default" for Mercurial).
 
     """
-    return revision if revision in ('default', ) else get_hash(revision)
+    return get_hash(revision) if revision in ('default', ) else revision

@@ -83,7 +83,10 @@ def archive_app(revision, out_file=None):
     revision_name = get_revision_name(revision)
     if not out_file:
         require('package_name')
-        out_file = '%s-%s.tar.gz' % (env.package_name, revision_name)
+        out_file = '%s-%s.tar' % (env.package_name, revision_name)
+    elif not out_file.endswith('.tar'):
+            out_file += '.tar'
+
     archive(revision, out_file, 'app')
     return out_file, revision_name
 

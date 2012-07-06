@@ -26,7 +26,7 @@ def archive(revision, out_file, sub_path, prefix=None):
     args = []
     if prefix:
         args.append('--prefix=' + prefix)
-    local('git archive --format=tar %s %s %s > %s' % (' '.join(args), revision, sub_path, out_file))
+    local('git archive %s %s %s > %s' % (' '.join(args), revision, sub_path, out_file))
 
 
 def get_hash(revision):
@@ -49,4 +49,4 @@ def get_revision_name(revision):
     revisions that are not unique (eg "master" for GIT).
 
     """
-    return revision if revision in ('master', ) else get_hash(revision)
+    return get_hash(revision) if revision in ('master', ) else revision
