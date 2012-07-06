@@ -32,6 +32,18 @@ def archive(revision, out_file, sub_path, prefix=None):
     local('hg archive %s %s' % (' '.join(args), out_file))
 
 
+def export_file(revision, path, out_file):
+    """
+    Retrieve a single file from a particular revision.
+
+    :param revision: revision to get file from
+    :param path: path to the file
+    :param out_file: output file name
+
+    """
+    local('hg cat -r %s %s > %s' % (revision, path, out_file))
+
+
 def get_hash(revision):
     """
     Obtain revisions hash code from Mercurial.

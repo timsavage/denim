@@ -27,6 +27,16 @@ Archive from local repository.
 
 """)
 
+export_file = __proxy.method('export_file', doc=
+"""
+Retrieve a single file from a particular revision.
+
+:param revision: revision to get file from
+:param path: path to the file
+:param out_file: output file name
+
+""")
+
 get_hash = __proxy.method('get_hash', doc=
 """
 Obtain revisions hash code from local repository.
