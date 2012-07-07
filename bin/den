@@ -1,0 +1,11 @@
+#!/bin/env python
+
+import optparse
+
+
+def main():
+    print "eek"
+
+
+if __name__ == '__main__':
+    main()
