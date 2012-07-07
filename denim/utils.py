@@ -1,6 +1,6 @@
 # -*- encoding:utf8 -*-
 from datetime import date
-from fabric.api import run, sudo, settings, hide
+from fabric.api import prompt, run, sudo, settings, hide
 
 __all__ = ('run_as', 'generate_version')
 
@@ -51,3 +51,22 @@ def run_test(command, hide_groups=('warnings', ), use_sudo=False, user=None):
     with settings(warn_only=True):
         with hide(*hide_groups):
             return run_as(command, use_sudo, user)
+
+
+def confirm(text, default=True):
+    """
+    Prompt user with a Y/N question?
+
+    :param text: question to confirm.
+    :param default: default value (treated as Boolean value)
+    :return: Boolean result of confirmation request.
+
+    .. note::
+        This method will automatically append (y|n) to your question.
+
+    """
+    text += ' (Y|n)' if default else ' (y|N)'
+    default = 'y' if default else 'n'
+    result = prompt(text, default=default, validate=r'^[YyNn]$')
+    return result.lower() == 'y'
+
