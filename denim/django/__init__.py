@@ -15,31 +15,31 @@ def manage(cmd, args='', revision=None, noinput=True, use_sudo=True, user=None):
     with paths.cd_package(revision):
         utils.run_as('python manage.py %(cmd)s %(args)s' % {
             'cmd': cmd,
-            'args': (' --noinput' if noinput else '') + args
+            'args': ('--noinput ' if noinput else '') + args
         }, use_sudo, user)
 
 
-def collectstatic(revision=None, noinput=True, use_sudo=True, user=None):
+def collectstatic(*args, **kwargs):
     """
     Collect static files.
     """
-    manage('collectstatic', revision, noinput, use_sudo, user)
+    manage('collectstatic', '', *args, **kwargs)
 
 
 @task
-def syncdb(revision=None, noinput=True, use_sudo=True, user=None):
+def syncdb(*args, **kwargs):
     """
     Run a database sync
     """
-    manage('syncdb', revision, noinput, use_sudo, user)
+    manage('syncdb', '', *args, **kwargs)
 
 
 @task
-def createsuperuser():
+def createsuperuser(*args, **kwargs):
     """
     Run a database sync and migrate operation.
     """
-    manage('createsuperuser', noinput=False)
+    manage('createsuperuser', '', *args, **kwargs)
 
 
 def link_settings(revision=None, use_sudo=True, user=None):
@@ -48,7 +48,7 @@ def link_settings(revision=None, use_sudo=True, user=None):
     """
     require('deploy_env')
     system.create_symlink(
-        paths.package_path(revision, 'deployment/settings_%(deploy_env)s.py' % env),
-        paths.package_path(revision, 'local_settings.py'),
+        paths.package_path(revision, '%(package_name)s/deployment/settings_%(deploy_env)s.py' % env),
+        paths.package_path(revision, '%(package_name)s/local_settings.py' % env),
         use_sudo=use_sudo, user=user
     )

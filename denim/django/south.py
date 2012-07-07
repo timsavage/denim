@@ -1,6 +1,6 @@
 # -*- encoding:utf8 -*-
 from fabric import colors
-from fabric.api import task
+from fabric.api import task, settings, hide
 from denim import django
 
 
@@ -14,13 +14,17 @@ def show_migrations(revision=None, non_applied_only=False):
 
     """
     if non_applied_only:
-        result = django.manage('migrate', args='--list | grep -v "(\*)"', revision=revision, use_sudo=False)
-        if result.find('( )') != -1:
-            print(colors.red('*'*34))
-            print(colors.red('* Migrations need to be applied! *'))
-            print(colors.red('*'*34))
+        with settings(hide('warnings'), warn_only=True):
+            result = django.manage('migrate', args='--list | grep -v "(\*)"', revision=revision, use_sudo=False)
+        if result:
+            if result.find('( )') != -1:
+                print(colors.red('*'*34))
+                print(colors.red('* Migrations need to be applied! *'))
+                print(colors.red('*'*34))
+            else:
+                print(colors.green('Migrations up to date.'))
         else:
-            print(colors.green('Migrations up to date.'))
+            print(colors.magenta('No migrations defined/or not using south.'))
     else:
         django.manage('migrate', '--list', revision=revision, use_sudo=False)
 
