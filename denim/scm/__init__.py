@@ -2,7 +2,6 @@
 from fabric.api import env, task, require
 from denim._env_proxy import Proxy
 from denim import utils
-from denim import paths
 
 
 __proxy = Proxy('deploy_scm', globals(), 'hg')
@@ -97,7 +96,7 @@ def archive_app(revision, out_file=None):
     elif not out_file.endswith('.tar'):
             out_file += '.tar'
 
-    archive(revision, out_file, 'app')
+    archive(revision, out_file, 'app', prefix='.')
     return out_file, revision_name
 
 __all__ = __proxy.methods
