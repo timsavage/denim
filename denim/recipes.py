@@ -30,7 +30,7 @@ Django specific items
 
 """
 from fabric import colors
-from fabric.api import abort, prompt, put, require, sudo
+from fabric.api import abort, env, prompt, put, require, sudo
 from denim import (package, paths, pip, service, scm, system, utils,
                    virtualenv, webserver)
 
@@ -127,24 +127,27 @@ def standard_deploy(revision, use_pip_bundle=False):
     require('project_name', 'package_name', 'deploy_env')
 
     print colors.yellow("* Archive and upload requested revision.")
-    deployed_revision = archive_and_upload(revision)
+    env.revision = archive_and_upload(revision)
 
     with virtualenv.activate():
         print colors.yellow("* Install requirements.")
         if use_pip_bundle:
-            bundle_file = pip.create_bundle_from_revision(deployed_revision)
+            bundle_file = pip.create_bundle_from_revision(env.revision)
             pip.install_bundle(bundle_file)
         else:
-            pip.install_requirements(revision=deployed_revision, use_sudo=True)
+            pip.install_requirements(revision=env.revision, use_sudo=True)
 
-        standard_django_deploy(deployed_revision)
+    return env.revision
 
 
-def standard_django_deploy(revision):
+def standard_django_deploy(revision=None, noinput=False,
+                           enable_south_migrations=True):
     """
     Standard django deployment
 
     :param revision: revision of the app to work on.
+    :param noinput: do not ask for any input just automatically migrate.
+    :param revision: Do checks with south.
 
     .. note::
         This section follows on after the ``standard_deploy``.
@@ -152,6 +155,9 @@ def standard_django_deploy(revision):
     """
     import django
     from django import south
+
+    if not revision:
+        revision = env.revision
 
     with virtualenv.activate():
         print colors.yellow("* Setup Django deployment.")
@@ -162,13 +168,18 @@ def standard_django_deploy(revision):
         print colors.blue("** Collect static assets.")
         django.collectstatic(revision)
 
-        print colors.blue("** Display unapplied revisions")
-        south.show_migrations(revision, True)
+        if enable_south_migrations:
+            print colors.blue("** Display unapplied revisions")
+            south.show_migrations(revision, True)
+            msg = "Sync models and apply migrations? (Y|n)"
+        else:
+            msg = "Sync models? (Y|n)"
 
-        if prompt("Sync models and apply migrations? (Y|n)", default='Y', validate=r'^[YyNn]$') == 'Y':
+        if noinput or prompt(msg, default='Y', validate=r'^[YyNn]$') == 'Y':
             print colors.blue("** Syncing models")
             django.syncdb(revision)
 
-            print colors.blue("** Applying migrations")
-            south.migrate(revision)
+            if enable_south_migrations:
+                print colors.blue("** Applying migrations")
+                south.migrate(revision)
 
