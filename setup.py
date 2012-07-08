@@ -19,7 +19,6 @@ setup(
         'denim.service',
         'denim.webserver',
     ],
-    scripts=['bin/den'],
     requires=['fabric'],
     classifiers=[
         'Development Status :: 3 - Alpha',
