@@ -30,7 +30,9 @@ Django specific items
 
 """
 from fabric import colors
-from fabric.api import abort, env, prompt, put, require, sudo
+from fabric.api import abort, env, put, require, sudo
+from fabric.contrib.console import confirm
+from fabric.contrib import files
 from denim import (package, paths, pip, service, scm, system, utils,
                    virtualenv, webserver)
 
@@ -48,11 +50,12 @@ DEFAULT_PACKAGES = [
 ]
 
 
-def archive_and_upload(revision, use_sudo=True, user=None):
+def archive_and_upload(revision, noinput=False, use_sudo=True, user=None):
     """
     Upload application archive based on a source control revision.
 
     :param revision: revision to deploy.
+    :param noinput: do not ask for any input just take default action.
     :return: name of the revision that was deployed.
 
     """
@@ -60,6 +63,13 @@ def archive_and_upload(revision, use_sudo=True, user=None):
     put(archive_file, '/tmp/%s' % archive_file)
     with paths.cd_deploy('app'):
         utils.run_as('tar -xf /tmp/%s' % archive_file, use_sudo, user)
+        if files.exists(revision):
+            if noinput or confirm(colors.red('This revision already exits on server, deploy over existing revision?')):
+                utils.run_as('rm -rf %s' % revision, use_sudo, user)
+            elif confirm('Terminate deployment?'):
+                abort('Deployment terminated.')
+            else:
+                return revision_name
         utils.run_as('mv app %s' % revision, use_sudo, user)
     return revision_name
 
@@ -116,18 +126,20 @@ def standard_provision(required_packages=DEFAULT_PACKAGES,
     service.install_config()
 
 
-def standard_deploy(revision, use_pip_bundle=False):
+def standard_deploy(revision, noinput=False,
+                    use_pip_bundle=False):
     """
     Standard deployment recipe.
 
     :param revision: revision of the app to work on.
+    :param noinput: do not ask for any input just take default action.
     :param use_pip_bundle: Create a pip bundle to install packages.
 
     """
     require('project_name', 'package_name', 'deploy_env')
 
     print colors.yellow("* Archive and upload requested revision.")
-    env.revision = archive_and_upload(revision)
+    env.revision = archive_and_upload(revision, noinput)
 
     with virtualenv.activate():
         print colors.yellow("* Install requirements.")
@@ -146,7 +158,7 @@ def standard_django_deploy(revision=None, noinput=False,
     Standard django deployment
 
     :param revision: revision of the app to work on.
-    :param noinput: do not ask for any input just automatically migrate.
+    :param noinput: do not ask for any input just take default action.
     :param revision: Do checks with south.
 
     .. note::
@@ -169,13 +181,13 @@ def standard_django_deploy(revision=None, noinput=False,
         django.collectstatic(revision)
 
         if enable_south_migrations:
-            print colors.blue("** Display unapplied revisions")
+            print colors.blue("** Display un-applied revisions")
             south.show_migrations(revision, True)
-            msg = "Sync models and apply migrations? (Y|n)"
+            msg = "Sync models and apply migrations?"
         else:
-            msg = "Sync models? (Y|n)"
+            msg = "Sync models?"
 
-        if noinput or prompt(msg, default='Y', validate=r'^[YyNn]$') == 'Y':
+        if noinput or confirm(msg):
             print colors.blue("** Syncing models")
             django.syncdb(revision)
 
