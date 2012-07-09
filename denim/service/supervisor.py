@@ -73,7 +73,7 @@ def stop(service_name=None):
     """
     if not service_name:
         service_name = env.project_name
-    sudo('supervisorctl start %s' % service_name)
+    sudo('supervisorctl stop %s' % service_name)
 
 
 def restart(service_name=None):
