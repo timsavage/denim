@@ -1,0 +1,41 @@
+from denim import *
+from denim import recipes
+
+
+## Configuration ######################
+
+# Name of the project
+env.project_name = '{{ project_name }}'
+
+# Name of the application package
+env.package_name = '{{ package_name }}'
+
+# Override default source control management tool
+{% if deploy_scm is not defined %}# {% endif %}env.deploy_scm = '{{ deploy_scm|d('hg') }}' # Options 'git', 'hg'
+
+# Override default source control management tool
+{% if deploy_service_manager is not defined %}# {% endif %}env.deploy_service_manager = '{{ deploy_service_manager|d('supervisor') }}' # Options 'supervisor'
+
+# Override default web-server
+{% if deploy_web_server is not defined %}# {% endif %}env.deploy_web_server = '{{ deploy_web_server|d('nginx') }}' # Options 'apache', 'nginx'
+
+
+## Deployment environments ############
+{% for env in deployment_envs %}
+@deploy_env
+def {{ env.name }}():
+    """
+    Environment configuration for {{ env.name }}.
+    """
+    env.hosts = [{{ env.hosts|join(', ') }}]
+{% endfor %}
+
+## Actions ############################
+
+@task
+def provision():{% block provision %}
+    recipes.standard_provision(){% endblock %}
+
+@task(alias='d')
+def deploy(revision):{% block deploy %}
+    recipes.standard_deploy(revision){% endblock %}

@@ -1,0 +1,9 @@
+[program:{{ project_name }}]
+command={{ command }}
+directory={{ directory }}
+#environment=PATH="/var/www/django/bin"
+process_name=%(program_name)s
+user={{ user }}
+autostart=true
+autorestart=true
+redirect_stderr=True

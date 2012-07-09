@@ -1,0 +1,4 @@
+{% extends "fabfile.py.txt"%}
+{% block deploy %}{{ super() }}
+    recipes.standard_django_deploy()
+{% endblock %}
