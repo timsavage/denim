@@ -23,7 +23,7 @@ def user_exists(user=None):
     return result.return_code == 0
 
 
-def create_system_user(user=env.deploy_user, home=None):
+def create_system_user(user=None, home=None):
     """
     Create a system user.
 
@@ -35,6 +35,8 @@ def create_system_user(user=env.deploy_user, home=None):
     :return: True if user is created; else False to indicate user already
         exists.
     """
+    if user is None:
+        user = env.deploy_user
     if not user_exists(user):
         sudo('adduser --system --quiet --home %(home)s %(user)s' % {
             'home': home if home else paths.deploy_path(),
@@ -45,7 +47,7 @@ def create_system_user(user=env.deploy_user, home=None):
         return False
 
 
-def change_owner(path, recursive=False, user=env.deploy_user):
+def change_owner(path, recursive=False, user=None):
     """
     Change the owner of a path.
 
@@ -54,6 +56,8 @@ def change_owner(path, recursive=False, user=env.deploy_user):
         folders.
     :param user: name of the user to make owner; defaults to the deploy_user.
     """
+    if user is None:
+        user = env.deploy_user
     sudo('chown %s %s. %s' % ('-R' if recursive else '', user, path))
 
 
