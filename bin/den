@@ -1,5 +1,6 @@
 #!/bin/env python
 import argparse
+import denim
 
 
 class EnvironmentAction(argparse.Action):
@@ -15,10 +16,12 @@ class EnvironmentAction(argparse.Action):
 def parse_options():
     parser = argparse.ArgumentParser(description=
 """
-Tools and scaffolding for Denim.
-""")
-    parser.add_argument('--verbose', action='store_true',
+Tools and scaffolding for Denim  %s
+""" % denim.__version__)
+    parser.add_argument('-v', '--verbose', action='store_true',
         help="enables verbose output.")
+    parser.add_argument('--version', action='store_true',
+        help="display version and exit.")
     subparsers = parser.add_subparsers()
 
     ## Start Project.
