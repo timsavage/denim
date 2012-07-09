@@ -42,7 +42,8 @@ def manager_restart():
     Restart service manager daemon.
 
     """
-    sudo('/etc/init.d/supervisor restart')
+    # Using run test as this method seems to return a status of 1
+    utils.run_test('/etc/init.d/supervisor restart', use_sudo=True)
 
 
 def manager_reload():
