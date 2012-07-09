@@ -3,6 +3,8 @@ from fabric import colors
 from fabric.api import task, settings, hide
 from denim import django
 
+__all__ = ('show_migrations', 'migrate',)
+
 
 @task
 def show_migrations(revision=None, non_applied_only=False):

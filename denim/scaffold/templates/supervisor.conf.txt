@@ -1,5 +1,5 @@
-[program:{{ project_name }}]
-command={{ command }}
+[program:{{ project_name }}.gunicorn]
+command={{ deploy_path }}/gunicorn_django -p {{ deploy_path }}/var/gunicorn.pid -b unix:{{ deploy_path }}/var/wsgi.sock -w 8
 directory={{ directory }}
 #environment=PATH="/var/www/django/bin"
 process_name=%(program_name)s

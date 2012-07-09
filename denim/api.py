@@ -24,7 +24,20 @@ Provision server:
 
 Deploy (require a source control revision to be supplied. i.e. master):
 > fab {%(environments)s} deploy:{revision}
+
+Status of service:
+> fab {%(environments)s} service.status
+
 """ % {
         'environments': '|'.join(get_environments()),
         'version': denim.__version__,
     }
+
+
+@__api.task
+def environment():
+    """
+    Environments defined in fabfile.
+    """
+    from denim.environment import get_environments
+    print ','.join(get_environments())
