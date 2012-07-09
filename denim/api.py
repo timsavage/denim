@@ -14,9 +14,10 @@ def help():
     Help on common operations.
     """
     from denim.environment import get_environments
+    import denim
 
     print """
-Common operations.
+Common operations with Denim (%(version)s).
 
 Provision server:
 > fab {%(environments)s} init
@@ -25,4 +26,5 @@ Deploy (require a source control revision to be supplied. i.e. master):
 > fab {%(environments)s} deploy:{revision}
 """ % {
         'environments': '|'.join(get_environments()),
+        'version': denim.__version__,
     }
