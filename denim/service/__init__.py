@@ -27,28 +27,33 @@ Upload configuration file.
 
 manager_start = __proxy.method('manager_start', task=True, doc=
 """
-Start service manager.
+Start service manager daemon.
 
 """)
 
 manager_stop = __proxy.method('manager_stop', task=True, doc=
 """
-Stop service manager.
+Stop service manager daemon.
 
 """)
 
 manager_restart = __proxy.method('manager_restart', task=True, doc=
 """
-Restart service manager.
+Restart service manager daemon.
 
 """)
 
 manager_reload = __proxy.method('manager_reload', task=True, doc=
 """
-Reload service manager.
+Reload service manager daemon.
 
 """)
 
+manager_status = __proxy.method('manager_status', task=True, doc=
+"""
+Status of service manager daemon.
+
+""")
 
 ## Service Management #################
 

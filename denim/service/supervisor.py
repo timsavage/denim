@@ -1,6 +1,7 @@
 # -*- encoding:utf8 -*-
-from fabric.api import *
-from denim import paths
+from fabric import colors
+from fabric.api import sudo, put, env
+from denim import paths, utils
 
 SERVICE_NAME = 'supervisor'
 
@@ -22,7 +23,7 @@ def upload_config(name_prefix=None):
 
 def manager_start():
     """
-    Start service manager.
+    Start service manager daemon.
 
     """
     sudo('/etc/init.d/supervisor start')
@@ -30,7 +31,7 @@ def manager_start():
 
 def manager_stop():
     """
-    Stop service manager.
+    Stop service manager daemon.
 
     """
     sudo('/etc/init.d/supervisor stop')
@@ -38,7 +39,7 @@ def manager_stop():
 
 def manager_restart():
     """
-    Restart service manager.
+    Restart service manager daemon.
 
     """
     sudo('/etc/init.d/supervisor restart')
@@ -46,10 +47,21 @@ def manager_restart():
 
 def manager_reload():
     """
-    Reload service manager.
+    Reload service manager daemon.
 
     """
     sudo('supervisorctl reread')
+
+
+def manager_status():
+    """
+    Status of service manager daemon.
+
+    """
+    if utils.run_test('/etc/init.d/supervisor status', use_sudo=True):
+        print colors.green("Service is Up")
+    else:
+        print colors.red("Service is Down")
 
 
 def start(service_name=None):
