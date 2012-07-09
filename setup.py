@@ -1,12 +1,13 @@
 import os
 from setuptools import setup
+import denim
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
     name='denim',
-    version='0.1',
+    version=denim.__version__,
     url='http://bitbucket.org/timsavage/denim',
     author='Tim Savage',
     author_email='tim.savage@poweredbypenguins.org',
