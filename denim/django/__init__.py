@@ -1,6 +1,7 @@
 # -*- encoding:utf8 -*-
 from fabric.api import env, require, task
 from denim import paths, system, utils
+from denim.constants import DeployUser
 
 
 def manage(cmd, args='', revision=None, noinput=True, use_sudo=True, user=None):
@@ -19,11 +20,18 @@ def manage(cmd, args='', revision=None, noinput=True, use_sudo=True, user=None):
         }, use_sudo, user)
 
 
-def collectstatic(*args, **kwargs):
+def test_deploy(revision=None):
+    """
+    Call manage.py validate to ensure deployment is working correctly.
+    """
+    manage('validate', '', revision, noinput=False)
+
+
+def collectstatic(use_sudo=True, user=DeployUser):
     """
     Collect static files.
     """
-    manage('collectstatic', '', *args, **kwargs)
+    manage('collectstatic', '', use_sudo=use_sudo, user=user)
 
 
 @task
