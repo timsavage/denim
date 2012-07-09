@@ -1,0 +1,85 @@
+#!/bin/env python
+import argparse
+
+
+class EnvironmentAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        environments = getattr(namespace, self.dest)
+        environments = {} if environments is None else environments
+        env, _, hosts = values.partition(':')
+        hosts = hosts.split(',') if hosts else []
+        environments[env] = hosts
+        setattr(namespace, self.dest, environments)
+
+
+def parse_options():
+    parser = argparse.ArgumentParser(description=
+"""
+Tools and scaffolding for Denim.
+""")
+    parser.add_argument('--verbose', action='store_true',
+        help="enables verbose output.")
+    subparsers = parser.add_subparsers()
+
+    ## Start Project.
+    parser_start_project = subparsers.add_parser('startproject',
+        help="Start a project using Denim"
+    )
+    parser_start_project.add_argument('project_name', action='store',
+        help="Name of the project to create."
+    )
+    parser_start_project.add_argument('package_name', action='store',
+        help="Name of the application package."
+    )
+
+    parser_start_project.add_argument('-n', '--hostname', action='store',
+        default='www.example.com',
+        help="Hostname to use as base."
+    )
+    parser_start_project.add_argument('-e', '--env', action=EnvironmentAction,
+        help="Add deployment environment (specify environments)"
+    )
+    parser_start_project.add_argument('-x', '--extra_env', action=EnvironmentAction,
+        help="Add additional environment (specify additional environments)"
+    )
+
+    parser_start_project.add_argument('-t', '--template', action='store',
+        default='django',
+        choices=('django',),
+        help="Type of project"
+    )
+    parser_start_project.add_argument('--scm', action='store',
+        default='hg',
+        choices=('git', 'hg',),
+        help="Source control to use."
+    )
+    parser_start_project.add_argument('--service', action='store',
+        default='supervisor',
+        choices=('supervisor',),
+        help="Service manager to use."
+    )
+    parser_start_project.add_argument('--webserver', action='store',
+        default='nginx',
+        choices=('apache', 'nginx',),
+        help="Web server to use."
+    )
+
+    # Add
+    parser_start_project = subparsers.add_parser('startproject',
+        help="Start a project using Denim"
+    )
+
+    return parser.parse_args()
+
+
+def main():
+    options = parse_options()
+
+    from denim import scaffold
+
+
+
+
+
+if __name__ == '__main__':
+    main()
