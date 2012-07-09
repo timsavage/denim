@@ -59,18 +59,21 @@ def archive_and_upload(revision, noinput=False, use_sudo=True, user=None):
     :return: name of the revision that was deployed.
 
     """
+    # Archive and upload package
     archive_file, revision_name = scm.archive_app(revision)
     put(archive_file, '/tmp/%s' % archive_file)
+
     with paths.cd_deploy('app'):
+        # Extract package
         utils.run_as('tar -xf /tmp/%s' % archive_file, use_sudo, user)
-        if files.exists(revision):
+        if files.exists(revision_name):
             if noinput or confirm(colors.red('This revision already exits on server, deploy over existing revision?')):
-                utils.run_as('rm -rf %s' % revision, use_sudo, user)
+                utils.run_as('rm -rf %s' % revision_name, use_sudo, user)
             elif confirm('Terminate deployment?'):
                 abort('Deployment terminated.')
             else:
                 return revision_name
-        utils.run_as('mv app %s' % revision, use_sudo, user)
+        utils.run_as('mv app %s' % revision_name, use_sudo, user)
     return revision_name
 
 
@@ -88,12 +91,13 @@ def create_standard_layout():
 
     # Set correct user for application writable paths.
     system.change_owner(paths.join_paths(deploy_path, 'var'))
-    system.change_owner(paths.join_paths(deploy_path, 'public/media'))
+    system.change_owner(paths.join_paths(deploy_path, 'public'))
     system.change_owner(log_path)
 
 
-def standard_provision(required_packages=DEFAULT_PACKAGES,
-                       install_packages=True):
+def standard_provision(extra_packages=[],
+                       install_packages=True,
+                       required_packages=DEFAULT_PACKAGES,):
     """
     Standard provisioning recipe.
 
@@ -120,9 +124,9 @@ def standard_provision(required_packages=DEFAULT_PACKAGES,
     virtualenv.create()
 
     print colors.yellow("* Upload configuration for dependant services.")
-    print colors.blue("** Web server.")
+    print colors.cyan("** Web server.")
     webserver.install_config()
-    print colors.blue("** Service control.")
+    print colors.cyan("** Service control.")
     service.install_config()
 
 
@@ -147,7 +151,7 @@ def standard_deploy(revision, noinput=False,
             bundle_file = pip.create_bundle_from_revision(env.revision)
             pip.install_bundle(bundle_file)
         else:
-            pip.install_requirements(revision=env.revision, use_sudo=True)
+            pip.install_requirements(env.revision, use_sudo=True)
 
     return env.revision
 
@@ -174,24 +178,28 @@ def standard_django_deploy(revision=None, noinput=False,
     with virtualenv.activate():
         print colors.yellow("* Setup Django deployment.")
 
-        print colors.blue("** Symlink in environment settings.")
+        print colors.cyan("** Symlink in environment settings.")
         django.link_settings(revision)
 
-        print colors.blue("** Collect static assets.")
+        print colors.cyan("** Test deployment (./manage.py validate)..."),
+        django.test_deploy(revision)
+        print colors.green(' [OK]')
+
+        print colors.cyan("** Collect static assets.")
         django.collectstatic(revision)
 
         if enable_south_migrations:
-            print colors.blue("** Display un-applied revisions")
+            print colors.cyan("** Display unapplied revisions")
             south.show_migrations(revision, True)
             msg = "Sync models and apply migrations?"
         else:
             msg = "Sync models?"
 
         if noinput or confirm(msg):
-            print colors.blue("** Syncing models")
+            print colors.cyan("** Syncing models")
             django.syncdb(revision)
 
             if enable_south_migrations:
-                print colors.blue("** Applying migrations")
+                print colors.cyan("** Applying migrations")
                 south.migrate(revision)
 

@@ -6,7 +6,7 @@ from denim import paths, scm, utils
 __all__ = ('install_requirements', )
 
 
-def install_requirements(path_to_requirements=None, revision=None,
+def install_requirements(revision=None, path_to_requirements=None,
                          use_sudo=True, user=None):
     """
     Install requirements with PIP.
