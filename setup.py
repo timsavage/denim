@@ -26,7 +26,7 @@ setup(
 #    ],
     requires=['fabric'],
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Framework :: Fabric',
     ]
 )
