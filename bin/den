@@ -37,10 +37,10 @@ Tools and scaffolding for Denim.
         help="Hostname to use as base."
     )
     parser_start_project.add_argument('-e', '--env', action=EnvironmentAction,
-        help="Add deployment environment (specify environments)"
+        help="Command delimited list of deployment environments (override defaults)"
     )
     parser_start_project.add_argument('-x', '--extra_env', action=EnvironmentAction,
-        help="Add additional environment (specify additional environments)"
+        help="Command delimited list of deployment environments (add to defaults)"
     )
 
     parser_start_project.add_argument('-t', '--template', action='store',
@@ -64,9 +64,17 @@ Tools and scaffolding for Denim.
         help="Web server to use."
     )
 
-    # Add
-    parser_start_project = subparsers.add_parser('startproject',
-        help="Start a project using Denim"
+    # Add scaffold options
+    parser_scaffold = subparsers.add_parser('scaffold',
+        help="Scaffold new configuration or environment"
+    )
+    parser_scaffold.add_argument('type', action='store',
+        choices=('django','nginx','supervisor'),
+        help="Type of file to scaffold."
+    )
+    parser_scaffold.add_argument('environment', action='store',
+        default='*',
+        help="Name of environment to scaffold; use * for all."
     )
 
     return parser.parse_args()
