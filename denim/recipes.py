@@ -35,6 +35,7 @@ from fabric.contrib.console import confirm
 from fabric.contrib import files
 from denim import (package, paths, pip, service, scm, system, utils,
                    virtualenv, webserver)
+from denim.constants import RootUser
 
 
 # These are the default packages for Nginx, PostgreSQL and Supervisor for
@@ -91,7 +92,7 @@ def create_standard_layout():
 
     # Set correct user for application writable paths.
     system.change_owner(paths.join_paths(deploy_path, 'var'))
-    system.change_owner(paths.join_paths(deploy_path, 'public'))
+    system.change_owner(paths.join_paths(deploy_path, 'public'), recursive=True)
     system.change_owner(log_path)
 
 
@@ -111,7 +112,7 @@ def standard_provision(extra_packages=[],
     require('project_name', 'package_name', 'deploy_env')
 
     print colors.yellow("* Check correct packages are installed.")
-    for package_name in required_packages:
+    for package_name in required_packages + extra_packages:
         if not package.is_installed(package_name):
             if install_packages:
                 package.install(package_name)
@@ -156,24 +157,22 @@ def standard_deploy(revision, noinput=False,
     return env.revision
 
 
-def standard_django_deploy(revision=None, noinput=False,
+def standard_django_deploy(noinput=False,
                            enable_south_migrations=True):
     """
     Standard django deployment
 
-    :param revision: revision of the app to work on.
     :param noinput: do not ask for any input just take default action.
     :param revision: Do checks with south.
 
     .. note::
-        This section follows on after the ``standard_deploy``.
+        This section assumes ``standard_deploy`` was run.
 
     """
     import django
     from django import south
 
-    if not revision:
-        revision = env.revision
+    revision = env.revision
 
     with virtualenv.activate():
         print colors.yellow("* Setup Django deployment.")
@@ -203,3 +202,26 @@ def standard_django_deploy(revision=None, noinput=False,
                 print colors.cyan("** Applying migrations")
                 south.migrate(revision)
 
+
+def standard_activate_deploy(noinput=False):
+    """
+    Standard activate recipe.
+
+    :param noinput: do not ask for any input just take default action.
+
+    .. note::
+        This section assumes ``standard_deploy`` was run.
+
+    """
+    revision = env.revision
+
+    print colors.yellow("* Make this deployment current.")
+    print colors.cyan("** Symlinking to current")
+    system.create_symlink(
+        paths.package_path(revision),
+        paths.package_path('current'),
+        use_sudo=True, user=RootUser
+    )
+
+    print colors.cyan("** Restart service")
+    service.restart()
