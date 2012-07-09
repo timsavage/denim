@@ -19,6 +19,10 @@ setup(
         'denim.service',
         'denim.webserver',
     ],
+# Enable this once scaffolding support is more mature.
+#    scripts=[
+#        'bin/den',
+#    ],
     requires=['fabric'],
     classifiers=[
         'Development Status :: 3 - Alpha',
