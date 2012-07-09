@@ -1,5 +1,36 @@
 # -*- encoding:utf8 -*-
-from fabric import api
+from fabric import api, colors
+from fabric.tasks import WrappedCallableTask
+
+
+_registered_environments = []
+def add_environment(environment):
+    global _registered_environments
+    _registered_environments.append(environment)
+
+
+def get_environments():
+    global _registered_environments
+    return _registered_environments
+
+
+class EnvironmentCallableTask(WrappedCallableTask):
+    """
+    Wraps a given callable transparently, while marking it as a valid Task.
+
+    Generally used via `@task <~fabric.decorators.task>` and not directly.
+
+    .. versionadded:: 1.1
+    """
+    def __init__(self, callable, *args, **kwargs):
+        self.name = callable.__name__
+        add_environment(self.name)
+        super(EnvironmentCallableTask, self).__init__(callable, *args, **kwargs)
+
+    def run(self, *args, **kwargs):
+        print colors.cyan('* Deployment environment set to: %s' % self.name)
+        api.env.deploy_env = self.name
+        return self.wrapped(*args, **kwargs)
 
 
 class Proxy(object):

@@ -9,7 +9,7 @@ Options:
 - supervisor (default)
 
 """
-from denim._env_proxy import Proxy
+from denim.environment import Proxy
 
 
 __proxy = Proxy('deploy_service_manager', globals(), 'supervisor')

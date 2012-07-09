@@ -12,7 +12,7 @@ Options:
 
 """
 from fabric.api import abort
-from denim._env_proxy import Proxy
+from denim.environment import Proxy
 
 
 __proxy = Proxy('deploy_web_server', globals(), 'nginx')

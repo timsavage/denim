@@ -1,6 +1,6 @@
 # -*- encoding:utf8 -*-
 from fabric.api import env, task, require
-from denim._env_proxy import Proxy
+from denim.environment import Proxy
 from denim import utils
 
 

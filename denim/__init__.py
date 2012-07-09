@@ -130,5 +130,6 @@ env.deploy_user = 'webapps'
 
 from denim.paths import (cd_deploy, cd_package, deploy_path, package_path)
 from denim import (scm, service, system, virtualenv, webserver)
+from denim.decorators import deploy_env
 
 __version__ = (0, 1, 0, 'alpha', 0)
