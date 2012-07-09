@@ -1,4 +1,5 @@
-from denim import *
+from fabric.api import *
+from denim.api import *
 from denim import recipes
 
 
