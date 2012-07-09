@@ -96,7 +96,7 @@ def archive_app(revision, out_file=None):
     elif not out_file.endswith('.tar'):
             out_file += '.tar'
 
-    archive(revision, out_file, 'app', prefix='.')
+    archive(revision, out_file, 'app', prefix='./')
     return out_file, revision_name
 
 __all__ = __proxy.methods
