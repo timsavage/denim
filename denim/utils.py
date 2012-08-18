@@ -1,7 +1,7 @@
 # -*- encoding:utf8 -*-
 from datetime import date
 from fabric.api import run, sudo, settings, hide
-from denim.constants import RootUser, DeployUser
+from denim.constants import UserBase, RootUser
 
 __all__ = ('run_as', 'generate_version')
 
@@ -15,7 +15,7 @@ def run_as(command, use_sudo=False, user=RootUser, **kwargs):
     :param user: if using sudo run command as this user; default None (root).
 
     """
-    if user is RootUser or user is DeployUser:
+    if hasattr(user, 'sudo_identity'):
         user = user.sudo_identity()
 
     if use_sudo:
