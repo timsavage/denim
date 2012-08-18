@@ -40,4 +40,5 @@ def environment():
     Environments defined in fabfile.
     """
     from denim.environment import get_environments
-    print ','.join(get_environments())
+    print 'Environments defined in fab file:'
+    print ', '.join(get_environments())

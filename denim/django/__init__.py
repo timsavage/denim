@@ -27,27 +27,27 @@ def test_deploy(revision=None):
     manage('validate', '', revision, noinput=False)
 
 
-def collectstatic(use_sudo=True, user=DeployUser):
+def collectstatic(revision=None, use_sudo=True, user=DeployUser):
     """
     Collect static files.
     """
-    manage('collectstatic', '', use_sudo=use_sudo, user=user)
+    manage('collectstatic', '', revision, use_sudo=use_sudo, user=user)
 
 
 @task
-def syncdb(user=DeployUser, *args, **kwargs):
+def syncdb(revision=None, user=DeployUser, *args, **kwargs):
     """
     Run a database sync
     """
-    manage('syncdb', '', user=user, *args, **kwargs)
+    manage('syncdb', '', revision, user=user, *args, **kwargs)
 
 
 @task
-def createsuperuser(user=DeployUser, *args, **kwargs):
+def createsuperuser(revision=None, user=DeployUser, *args, **kwargs):
     """
     Run a database sync and migrate operation.
     """
-    manage('createsuperuser', '', noinput=False, user=user, *args, **kwargs)
+    manage('createsuperuser', '', revision, noinput=False, user=user, *args, **kwargs)
 
 
 def link_settings(revision=None, use_sudo=True, user=None):

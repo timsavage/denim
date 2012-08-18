@@ -1,7 +1,7 @@
 # -*- encoding:utf8 -*-
 from datetime import date
 from fabric.api import run, sudo, settings, hide
-from denim.constants import UserBase, RootUser
+from denim.constants import RootUser
 
 __all__ = ('run_as', 'generate_version')
 
