@@ -43,11 +43,11 @@ def syncdb(revision=None, user=DeployUser, *args, **kwargs):
 
 
 @task
-def createsuperuser(revision=None, user=DeployUser, *args, **kwargs):
+def createsuperuser(username='', revision=None, user=DeployUser, *args, **kwargs):
     """
     Run a database sync and migrate operation.
     """
-    manage('createsuperuser', '', revision, noinput=False, user=user, *args, **kwargs)
+    manage('createsuperuser', username, revision, noinput=False, user=user, *args, **kwargs)
 
 
 def link_settings(revision=None, use_sudo=True, user=None):

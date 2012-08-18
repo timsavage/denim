@@ -131,8 +131,7 @@ def standard_provision(extra_packages=[],
     service.install_config()
 
 
-def standard_deploy(revision, noinput=False,
-                    use_pip_bundle=False):
+def standard_deploy(revision, skip_upload=False, noinput=False, use_pip_bundle=False):
     """
     Standard deployment recipe.
 
@@ -143,8 +142,12 @@ def standard_deploy(revision, noinput=False,
     """
     require('project_name', 'package_name', 'deploy_env')
 
-    print colors.yellow("* Archive and upload requested revision.")
-    env.revision = archive_and_upload(revision, noinput)
+    if skip_upload:
+        print colors.yellow("* Determine revision name.")
+        env.revision = scm.get_revision_name(revision)
+    else:
+        print colors.yellow("* Archive and upload requested revision.")
+        env.revision = archive_and_upload(revision, noinput)
 
     with virtualenv.activate():
         print colors.yellow("* Install requirements.")
