@@ -2,6 +2,7 @@
 from fabric import colors
 from fabric.api import task, settings, hide
 from denim import django
+from denim.constants import DeployUser
 
 __all__ = ('show_migrations', 'migrate',)
 
@@ -32,11 +33,12 @@ def show_migrations(revision=None, non_applied_only=False):
 
 
 @task
-def migrate(revision=None):
+def migrate(revision=None, user=DeployUser, *args, **kwargs):
     """
     Apply migrations.
 
     :param revision: revision of the application to run show migrations from.
 
     """
-    django.manage('migrate', revision=revision, use_sudo=False)
+    django.manage('migrate', '', revision, user=user, *args, **kwargs)
+
