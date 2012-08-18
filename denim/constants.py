@@ -2,7 +2,11 @@
 from fabric.api import env
 
 
-class RootUser(object):
+class UserBase(object):
+    pass
+
+
+class RootUser(UserBase):
     """
     Class to define Root user.
     """
@@ -13,7 +17,7 @@ class RootUser(object):
         return None
 
 
-class DeployUser(object):
+class DeployUser(UserBase):
     """
     Class to define Deploy User.
     """
