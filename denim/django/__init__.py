@@ -35,19 +35,19 @@ def collectstatic(use_sudo=True, user=DeployUser):
 
 
 @task
-def syncdb(*args, **kwargs):
+def syncdb(user=DeployUser, *args, **kwargs):
     """
     Run a database sync
     """
-    manage('syncdb', '', *args, **kwargs)
+    manage('syncdb', '', user=user, *args, **kwargs)
 
 
 @task
-def createsuperuser(*args, **kwargs):
+def createsuperuser(user=DeployUser, *args, **kwargs):
     """
     Run a database sync and migrate operation.
     """
-    manage('createsuperuser', '', *args, **kwargs)
+    manage('createsuperuser', '', noinput=False, user=user, *args, **kwargs)
 
 
 def link_settings(revision=None, use_sudo=True, user=None):
