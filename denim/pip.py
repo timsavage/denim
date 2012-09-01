@@ -6,8 +6,8 @@ from denim import paths, scm, utils
 __all__ = ('install_requirements', )
 
 
-def install_requirements(revision=None, path_to_requirements=None, update=True,
-                         use_sudo=True, user=None):
+def install_requirements(revision=None, path_to_requirements=None,
+                         upgrade=True, use_sudo=True, user=None):
     """
     Install requirements with PIP.
 
@@ -16,7 +16,7 @@ def install_requirements(revision=None, path_to_requirements=None, update=True,
 
     :path_to_requirements: path to requirements file; default is:
         `*deploy_path*/app/*revision*/requirements.txt`
-    :update: when installing requirements fetch updates.
+    :upgrade: when installing requirements fetch updates.
     :revision: A specific revision name.
 
     """
@@ -25,7 +25,7 @@ def install_requirements(revision=None, path_to_requirements=None, update=True,
     parameters = ['install']
     if env.has_key('proxy'):
         parameters.append('--proxy=%s' % env.proxy)
-    if update:
+    if upgrade:
         parameters.append('--upgrade')
     parameters.append('-r %s' % path_to_requirements)
     utils.run_as('pip ' + ' '.join(parameters), use_sudo, user)
