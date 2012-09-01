@@ -6,7 +6,7 @@ from denim import paths, scm, utils
 __all__ = ('install_requirements', )
 
 
-def install_requirements(revision=None, path_to_requirements=None,
+def install_requirements(revision=None, path_to_requirements=None, update=True,
                          use_sudo=True, user=None):
     """
     Install requirements with PIP.
@@ -16,17 +16,19 @@ def install_requirements(revision=None, path_to_requirements=None,
 
     :path_to_requirements: path to requirements file; default is:
         `*deploy_path*/app/*revision*/requirements.txt`
+    :update: when installing requirements fetch updates.
     :revision: A specific revision name.
 
     """
     if not path_to_requirements:
         path_to_requirements = paths.package_path(revision, 'requirements.txt')
+    parameters = ['install']
     if env.has_key('proxy'):
-        utils.run_as('pip install --proxy=%s -r %s' % (env.proxy,
-                                                       path_to_requirements),
-            use_sudo, user)
-    else:
-        utils.run_as('pip install -r %s' % path_to_requirements, use_sudo, user)
+        parameters.append('--proxy=%s' % env.proxy)
+    if update:
+        parameters.append('--upgrade')
+    parameters.append('-r %s' % path_to_requirements)
+    utils.run_as('pip ' + ' '.join(parameters), use_sudo, user)
 
 
 def create_bundle_from_revision(revision, bundle_file=None):
