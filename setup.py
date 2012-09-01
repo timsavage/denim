@@ -15,7 +15,9 @@ setup(
     long_description=read('README.rst'),
     packages=[
         'denim',
+        'denim.django',
         'denim.package',
+        'denim.scaffold',
         'denim.scm',
         'denim.service',
         'denim.webserver',
