@@ -12,7 +12,7 @@ setup(
     author='Tim Savage',
     author_email='tim.savage@poweredbypenguins.org',
     description='A Fabric deployment strategy for Python web applications.',
-    long_description=read('README.rst'),
+#    long_description=read('README.rst'),
     packages=[
         'denim',
         'denim.django',
@@ -29,6 +29,6 @@ setup(
     requires=['fabric'],
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Framework :: Fabric',
+        'Programming Language :: Python',
     ]
 )
