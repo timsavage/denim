@@ -29,6 +29,18 @@ def archive(revision, out_file, sub_path, prefix=None):
     local('git archive %s %s %s > %s' % (' '.join(args), revision, sub_path, out_file))
 
 
+def export_file(revision, path, out_file):
+    """
+    Retrieve a single file from a particular revision.
+
+    :param revision: revision to get file from
+    :param path: path to the file
+    :param out_file: output file name
+
+    """
+    local('git show %s:%s > %s' % (revision, path, out_file))
+
+
 def get_hash(revision):
     """
     Obtain revisions hash code from GIT.

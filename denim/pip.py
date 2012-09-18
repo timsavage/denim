@@ -53,7 +53,7 @@ def create_bundle_from_revision(revision, bundle_file=None):
     path_to_requirements = paths.local_working_path(file_name='%s-requirements.txt' % revision)
     scm.export_file(revision, 'app/requirements.txt', path_to_requirements)
 
-    local('pip bundle -r %s %s') % (path_to_requirements, bundle_file)
+    local('pip bundle -r %s %s' % (path_to_requirements, bundle_file))
     return bundle_file
 
 

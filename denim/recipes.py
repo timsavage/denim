@@ -149,12 +149,13 @@ def standard_deploy(revision, skip_upload=False, noinput=False, use_pip_bundle=F
         print colors.yellow("* Archive and upload requested revision.")
         env.revision = archive_and_upload(revision, noinput)
 
-    with virtualenv.activate():
-        print colors.yellow("* Install requirements.")
-        if use_pip_bundle:
-            bundle_file = pip.create_bundle_from_revision(env.revision)
+    print colors.yellow("* Install requirements.")
+    if use_pip_bundle:
+        bundle_file = pip.create_bundle_from_revision(env.revision)
+        with virtualenv.activate():
             pip.install_bundle(bundle_file)
-        else:
+    else:
+        with virtualenv.activate():
             pip.install_requirements(env.revision, use_sudo=True)
 
     return env.revision
