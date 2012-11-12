@@ -3,8 +3,9 @@ from denim.utils import set_api_wrapper, api_wrapper
 
 
 class Result(object):
-    def __init__(self, succeeded=True):
+    def __init__(self, succeeded=True, return_code=0):
         self.succeeded = succeeded
+        self.return_code = return_code
 
 
 class TestApiWrapper(object):

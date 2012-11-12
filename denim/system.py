@@ -1,5 +1,5 @@
 # -*- encoding:utf8 -*-
-from fabric.api import env, sudo, run, settings, hide
+from fabric.api import env, settings, hide
 from fabric.contrib import files
 from denim import paths, utils
 
@@ -18,7 +18,7 @@ def user_exists(user=None):
         hide('warnings', 'running', 'stdout', 'stderr'),
         warn_only=True
     ):
-        result = run('id -u %s' % user)
+        result = utils.run_as('id -u %s' % user)
 
     return result.return_code == 0
 
@@ -38,10 +38,10 @@ def create_system_user(user=None, home=None):
     if user is None:
         user = env.deploy_user
     if not user_exists(user):
-        sudo('adduser --system --quiet --home %(home)s %(user)s' % {
+        utils.run_as('adduser --system --quiet --home %(home)s %(user)s' % {
             'home': home if home else paths.deploy_path(),
             'user': user
-        })
+        }, use_sudo=True)
         return True
     else:
         return False
@@ -58,7 +58,7 @@ def change_owner(path, recursive=False, user=None):
     """
     if user is None:
         user = env.deploy_user
-    sudo('chown %s %s. %s' % ('-R' if recursive else '', user, path))
+    utils.run_as('chown %s %s. %s' % ('-R' if recursive else '', user, path), use_sudo=True)
 
 
 def create_symlink(target_path, link_path, replace_existing=True,
