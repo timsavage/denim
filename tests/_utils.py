@@ -14,14 +14,16 @@ class TestApiWrapper(object):
         """
         Clear all commands.
         """
-        self.sudo_commands = []
-        self.run_commands = []
+        self.commands = []
 
-    def sudo(self, command, *args, **kwargs):
-        return self.sudo_commands.append((command, args, kwargs))
+    def sudo(self, command, **kwargs):
+        return self.commands.append(('sudo', command, kwargs))
 
-    def run(self, command, *args, **kwargs):
-        return self.run_commands.append((command, args, kwargs))
+    def run(self, command, **kwargs):
+        return self.commands.append(('run', command, kwargs))
+
+    def local(self, command, **kwargs):
+        return self.commands.append(('local', command, kwargs))
 
 set_api_wrapper(TestApiWrapper())
 
@@ -35,19 +37,29 @@ class ApiTestCase(unittest.TestCase):
         self.api.reset()
 
     def assertCommand(self, expected_command, actual_command):
-        ec, ea, ekwa = expected_command
-        ac, aa, akwa = actual_command
+        e_scope, e_cmd, e_kwargs = expected_command
+        a_scope, a_cmd, a_kwargs = actual_command
 
-        self.assertEqual(ec, ac, msg='Command does not match. Expected "%s" got "%s"' % (ec, ac))
-        self.assertTupleEqual(ea, aa, msg='Command arguments do not match.\nExpected: %s\nActual: %s' % (ea, aa))
-        self.assertDictEqual(ekwa, akwa, msg='Command keyword arguments do not match.\nExpected: %s\nActual: %s' % (ekwa, akwa))
+        self.assertEqual(e_scope, a_scope,
+            msg='Command scope does not match. Expected "%s" got "%s"' % (e_scope, a_scope))
+        self.assertEqual(e_cmd, a_cmd,
+            msg='Command does not match. Expected "%s" got "%s"' % (e_cmd, a_cmd))
+        self.assertDictEqual(e_kwargs, a_kwargs,
+            msg='Command keyword arguments do not match.\nExpected: %s\nActual: %s' % (e_kwargs, a_kwargs))
 
-    def assertSudo(self, command, *args, **kwargs):
-        command_count = len(self.api.sudo_commands)
-        self.assertEqual(command_count, 1, msg="Expected a single sudo command got %s." % command_count)
-        self.assertCommand((command, args, kwargs), self.api.sudo_commands[0])
+    def assertSingeCommand(self, command, _scope, **kwargs):
+        user = kwargs.get('user')
+        if user and hasattr(user, 'sudo_identity'):
+            kwargs['user'] = user.sudo_identity()
+        command_count = len(self.api.commands)
+        self.assertEqual(command_count, 1, msg="Expected a single command got %s." % command_count)
+        self.assertCommand((_scope, command, kwargs), self.api.commands[0])
 
-    def assertRun(self, command, *args, **kwargs):
-        command_count = len(self.api.run_commands)
-        self.assertEqual(command_count, 1, msg="Expected a single run command got %s." % command_count)
-        self.assertCommand((command, args, kwargs), self.api.run_commands[0])
+    def assertSudo(self, command, **kwargs):
+        self.assertSingeCommand(command, _scope='sudo', **kwargs)
+
+    def assertRun(self, command, **kwargs):
+        self.assertSingeCommand(command, _scope='run', **kwargs)
+
+    def assertLocal(self, command, **kwargs):
+        self.assertSingeCommand(command, _scope='local', **kwargs)

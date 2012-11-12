@@ -1,6 +1,6 @@
 # -*- encoding:utf8 -*-
 from fabric import colors
-from fabric.api import sudo, put, env
+from fabric.api import put, env
 from denim import paths, utils
 
 SERVICE_NAME = 'supervisor'
@@ -26,7 +26,7 @@ def manager_start():
     Start service manager daemon.
 
     """
-    sudo('/etc/init.d/supervisor start')
+    utils.run_as('/etc/init.d/supervisor start', use_sudo=True)
 
 
 def manager_stop():
@@ -34,7 +34,7 @@ def manager_stop():
     Stop service manager daemon.
 
     """
-    sudo('/etc/init.d/supervisor stop')
+    utils.run_as('/etc/init.d/supervisor stop', use_sudo=True)
 
 
 def manager_restart():
@@ -51,7 +51,7 @@ def manager_reload():
     Reload service manager daemon.
 
     """
-    sudo('supervisorctl reread')
+    utils.run_as('supervisorctl reread', use_sudo=True)
 
 
 def manager_status():
@@ -74,7 +74,7 @@ def start(service_name=None):
     """
     if not service_name:
         service_name = env.project_name
-    sudo('supervisorctl start %s' % service_name)
+    utils.run_as('supervisorctl start %s' % service_name, use_sudo=True)
 
 
 def stop(service_name=None):
@@ -86,7 +86,7 @@ def stop(service_name=None):
     """
     if not service_name:
         service_name = env.project_name
-    sudo('supervisorctl stop %s' % service_name)
+    utils.run_as('supervisorctl stop %s' % service_name, use_sudo=True)
 
 
 def restart(service_name=None):
@@ -98,7 +98,7 @@ def restart(service_name=None):
     """
     if not service_name:
         service_name = env.project_name
-    sudo('supervisorctl restart %s' % service_name)
+    utils.run_as('supervisorctl restart %s' % service_name, use_sudo=True)
 
 
 def status(service_name=None):
@@ -110,4 +110,4 @@ def status(service_name=None):
     """
     if service_name is None:
         service_name = env.project_name
-    sudo('supervisorctl status %s' % service_name)
+    utils.run_as('supervisorctl status %s' % service_name, use_sudo=True)

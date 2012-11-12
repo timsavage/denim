@@ -12,14 +12,14 @@ class ApiWrapper(object):
     An easily replaceable wrapper around api commands to allow for easy
     testing.
     """
-    def sudo(self, command, *args, **kwargs):
-        return api.sudo(command, *args, **kwargs)
+    def sudo(self, command, **kwargs):
+        return api.sudo(command, **kwargs)
 
-    def run(self, command, *args, **kwargs):
-        return api.run(command, *args, **kwargs)
+    def run(self, command, **kwargs):
+        return api.run(command, **kwargs)
 
-    def local(self, command, *args, **kwargs):
-        return api.local(command, *args, **kwargs)
+    def local(self, command, **kwargs):
+        return api.local(command, **kwargs)
 
 
 __api_wrapper = ApiWrapper()
@@ -59,6 +59,17 @@ def run_as(command, use_sudo=False, user=RootUser, **kwargs):
         return api.sudo(command, user=user, **kwargs)
     else:
         return api.run(command, **kwargs)
+
+
+def local(command, **kwargs):
+    """
+    A wrapper around the local command to push commands through the API
+    wrapper to capture the output.
+    :param command:
+
+    """
+    api = api_wrapper()
+    return api.local(command, **kwargs)
 
 
 def run_test(command, hide_groups=('warnings', ), use_sudo=False, user=None):
