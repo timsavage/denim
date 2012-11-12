@@ -1,5 +1,6 @@
 # -*- encoding:utf8 -*-
 from fabric.api import sudo
+from denim import utils
 
 
 def upload_config(name_prefix=None):
@@ -15,24 +16,24 @@ def disable_config(name_prefix=None):
 
 
 def test_config():
-    sudo('/usr/sbin/apache2ctl configtest')
+    utils.run_as('/usr/sbin/apache2ctl configtest', use_sudo=True)
 
 
 def start():
-    sudo('/etc/init.d/apache2 start')
+    utils.run_as('/etc/init.d/apache2 start', use_sudo=True)
 
 
 def stop():
-    sudo('/etc/init.d/apache2 stop')
+    utils.run_as('/etc/init.d/apache2 stop', use_sudo=True)
 
 
 def restart(check_config=True):
     if check_config:
         test_config()
-    sudo('/etc/init.d/apache2 restart')
+    utils.run_as('/etc/init.d/apache2 restart', use_sudo=True)
 
 
 def reload(check_config=True):
     if check_config:
         test_config()
-    sudo('/etc/init.d/apache2 reload')
+    utils.run_as('/etc/init.d/apache2 reload', use_sudo=True)

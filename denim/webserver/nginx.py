@@ -1,5 +1,5 @@
 # -*- encoding:utf8 -*-
-from fabric.api import *
+from fabric.api import put
 from denim import (paths, system, utils)
 
 SERVICE_NAME = 'nginx'
@@ -33,20 +33,20 @@ def test_config():
 
 
 def start():
-    sudo('/etc/init.d/nginx start')
+    utils.run_as('/etc/init.d/nginx start', use_sudo=True)
 
 
 def stop():
-    sudo('/etc/init.d/nginx stop')
+    utils.run_as('/etc/init.d/nginx stop', use_sudo=True)
 
 
 def restart(check_config=True):
     if check_config:
         test_config()
-    sudo('/etc/init.d/nginx restart')
+    utils.run_as('/etc/init.d/nginx restart', use_sudo=True)
 
 
 def reload(check_config=True):
     if check_config:
         test_config()
-    sudo('/usr/sbin/nginx -s reload')
+    utils.run_as('/usr/sbin/nginx -s reload', use_sudo=True)

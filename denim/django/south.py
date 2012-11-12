@@ -17,7 +17,7 @@ def show_migrations(revision=None, non_applied_only=False):
     """
     if non_applied_only:
         with settings(hide('warnings'), warn_only=True):
-            result = django.manage('migrate', args='--list | grep -v "(\*)"', revision=revision, use_sudo=False)
+            result = django.manage('migrate', args=['--list | grep -v "(\*)"'], revision=revision, use_sudo=False)
         if result:
             if result.find('( )') != -1:
                 print(colors.red('*'*34))
