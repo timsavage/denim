@@ -7,7 +7,6 @@ from denim.constants import DeployUser
 __all__ = ('show_migrations', 'migrate',)
 
 
-@task
 def show_migrations(revision=None, non_applied_only=False):
     """
     Print report of migrations.
@@ -29,16 +28,18 @@ def show_migrations(revision=None, non_applied_only=False):
         else:
             print(colors.magenta('No migrations defined/or not using south.'))
     else:
-        django.manage('migrate', '--list', revision=revision, use_sudo=False)
+        django.manage('migrate', ['--list'], revision=revision, use_sudo=False)
 
 
-@task
-def migrate(revision=None, user=DeployUser, *args, **kwargs):
+def migrate(migration=None, revision=None, user=DeployUser, **kwargs):
     """
     Apply migrations.
 
     :param revision: revision of the application to run show migrations from.
+    :param migration: name of the migration to revert to, leave None to apply
+        all migrations.
 
     """
-    django.manage('migrate', '', revision, user=user, *args, **kwargs)
+    args = [migration] if migration else None
+    django.manage('migrate', args, revision, user=user, **kwargs)
 

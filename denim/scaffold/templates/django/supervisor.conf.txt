@@ -1,0 +1,9 @@
+[program:{{ project_name }}.gunicorn]
+command={{ deploy_path }}/gunicorn_django --pid {{ deploy_path }}/var/gunicorn.pid --bind unix:{{ deploy_path }}/var/wsgi.sock --workers 8 --log-file {{ log_path }}/gunicorn.log
+directory={{ directory }}
+#environment=PATH="/var/www/django/bin"
+process_name=%(program_name)s
+user={{ user }}
+autostart=true
+autorestart=true
+redirect_stderr=true

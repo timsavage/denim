@@ -7,7 +7,8 @@ __all__ = ('install_requirements', )
 
 
 def install_requirements(revision=None, path_to_requirements=None,
-                         upgrade=True, use_sudo=True, user=None):
+                         upgrade=True, use_sudo=True, user=None,
+                         path_to_log=None):
     """
     Install requirements with PIP.
 
@@ -27,6 +28,8 @@ def install_requirements(revision=None, path_to_requirements=None,
         parameters.append('--proxy=%s' % env.proxy)
     if upgrade:
         parameters.append('--upgrade')
+    if not path_to_log:
+        path_to_log = paths.deploy_path('var/pip.log')
     parameters.append('-r %s' % path_to_requirements)
     utils.run_as('pip ' + ' '.join(parameters), use_sudo, user)
 

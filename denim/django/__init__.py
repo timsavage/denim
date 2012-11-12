@@ -4,7 +4,7 @@ from denim import paths, system, utils
 from denim.constants import DeployUser
 
 
-def manage(cmd, args='', revision=None, noinput=True, use_sudo=True, user=None):
+def manage(cmd, args=None, revision=None, noinput=True, use_sudo=True, user=DeployUser):
     """
     Run a django manage.py command.
 
@@ -13,44 +13,45 @@ def manage(cmd, args='', revision=None, noinput=True, use_sudo=True, user=None):
     :param revision: version name that is being worked on.
     :param noinput: Do not ask for input.
     """
+    args = args or []
+    if noinput:
+        args.insert(0, '--noinput')
+    args.insert(0, cmd)
+
     with paths.cd_package(revision):
-        utils.run_as('python manage.py %(cmd)s %(args)s' % {
-            'cmd': cmd,
-            'args': ('--noinput ' if noinput else '') + args
-        }, use_sudo, user)
+        utils.run_as('python manage.py ' + ' '.join(args), use_sudo, user)
 
 
 def test_deploy(revision=None):
     """
     Call manage.py validate to ensure deployment is working correctly.
     """
-    manage('validate', '', revision, noinput=False)
+    manage('validate', revision=revision, noinput=False)
 
 
-def collectstatic(revision=None, use_sudo=True, user=DeployUser):
+def collectstatic(revision=None, user=None):
     """
     Collect static files.
     """
-    manage('collectstatic', '', revision, use_sudo=use_sudo, user=user)
+    manage('collectstatic',
+        revision=revision, user=user)
 
 
-@task
-def syncdb(revision=None, user=DeployUser, *args, **kwargs):
+def syncdb(revision=None, **kwargs):
     """
     Run a database sync
     """
-    manage('syncdb', '', revision, user=user, *args, **kwargs)
+    manage('syncdb', revision=revision, **kwargs)
 
 
-@task
-def createsuperuser(username='', revision=None, user=DeployUser, *args, **kwargs):
+def createsuperuser(username='', revision=None, **kwargs):
     """
     Run a database sync and migrate operation.
     """
-    manage('createsuperuser', username, revision, noinput=False, user=user, *args, **kwargs)
+    manage('createsuperuser', [username], revision=revision, noinput=False, **kwargs)
 
 
-def link_settings(revision=None, use_sudo=True, user=None):
+def link_settings(revision=None, user=None, **kwargs):
     """
     Put correct settings in place.
     """
@@ -58,5 +59,5 @@ def link_settings(revision=None, use_sudo=True, user=None):
     system.create_symlink(
         paths.package_path(revision, '%(package_name)s/deployment/settings_%(deploy_env)s.py' % env),
         paths.package_path(revision, '%(package_name)s/local_settings.py' % env),
-        use_sudo=use_sudo, user=user
+        user=user, **kwargs
     )

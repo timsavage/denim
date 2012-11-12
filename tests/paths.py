@@ -7,11 +7,6 @@ import denim.paths as target
 
 class PathTestCaseBase(unittest.TestCase):
     def setUp(self):
-        # Required by Denim
-        api.env.project_name = 'test-project'
-        api.env.package_name = 'test_project'
-        api.env.deploy_env = 'test'
-
         # Required for test cases
         api.env.real_fabfile = __file__
 
