@@ -1,5 +1,4 @@
 # -*- encoding:utf8 -*-
-from fabric.api import sudo
 from denim import utils
 
 
@@ -19,4 +18,4 @@ def install(name):
 
     :param name: name of the package to install.
     """
-    sudo('apt-get install "%s"' % name)
+    utils.run_as('apt-get install "%s"' % name, use_sudo=True)

@@ -2,6 +2,11 @@ import unittest
 from denim.utils import set_api_wrapper, api_wrapper
 
 
+class Result(object):
+    def __init__(self, succeeded=True):
+        self.succeeded = succeeded
+
+
 class TestApiWrapper(object):
     """
     An easily replaceable wrapper around api commands to allow for easy
@@ -17,13 +22,16 @@ class TestApiWrapper(object):
         self.commands = []
 
     def sudo(self, command, **kwargs):
-        return self.commands.append(('sudo', command, kwargs))
+        self.commands.append(('sudo', command, kwargs))
+        return Result()
 
     def run(self, command, **kwargs):
-        return self.commands.append(('run', command, kwargs))
+        self.commands.append(('run', command, kwargs))
+        return Result()
 
     def local(self, command, **kwargs):
-        return self.commands.append(('local', command, kwargs))
+        self.commands.append(('local', command, kwargs))
+        return Result()
 
 set_api_wrapper(TestApiWrapper())
 
@@ -56,10 +64,10 @@ class ApiTestCase(unittest.TestCase):
         self.assertCommand((_scope, command, kwargs), self.api.commands[0])
 
     def assertSudo(self, command, **kwargs):
-        self.assertSingeCommand(command, _scope='sudo', **kwargs)
+        return self.assertSingeCommand(command, _scope='sudo', **kwargs)
 
     def assertRun(self, command, **kwargs):
-        self.assertSingeCommand(command, _scope='run', **kwargs)
+        return self.assertSingeCommand(command, _scope='run', **kwargs)
 
     def assertLocal(self, command, **kwargs):
-        self.assertSingeCommand(command, _scope='local', **kwargs)
+        return self.assertSingeCommand(command, _scope='local', **kwargs)
