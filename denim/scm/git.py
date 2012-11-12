@@ -1,5 +1,5 @@
 # -*- encoding:utf8 -*-
-from fabric.api import local
+from denim.utils import local
 
 
 def tag(comment, tag_name):
@@ -26,7 +26,9 @@ def archive(revision, out_file, sub_path, prefix=None):
     args = []
     if prefix:
         args.append('--prefix=' + prefix)
-    local('git archive %s %s %s > %s' % (' '.join(args), revision, sub_path, out_file))
+    args.append(revision)
+    args.append(sub_path)
+    local('git archive %s > %s' % (' '.join(args), out_file))
 
 
 def export_file(revision, path, out_file):

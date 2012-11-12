@@ -1,5 +1,5 @@
 # -*- encoding:utf8 -*-
-from fabric.api import local
+from denim.utils import local
 
 
 def tag(comment, tag_name):

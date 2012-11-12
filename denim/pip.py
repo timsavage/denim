@@ -1,6 +1,6 @@
 # -*- encoding:utf8 -*-
 import os
-from fabric.api import env, local, put, require
+from fabric.api import env, put, require
 from denim import paths, scm, utils
 
 __all__ = ('install_requirements', )
@@ -56,7 +56,7 @@ def create_bundle_from_revision(revision, bundle_file=None):
     path_to_requirements = paths.local_working_path(file_name='%s-requirements.txt' % revision)
     scm.export_file(revision, 'app/requirements.txt', path_to_requirements)
 
-    local('pip bundle -r %s %s' % (path_to_requirements, bundle_file))
+    utils.local('pip bundle -r %s %s' % (path_to_requirements, bundle_file))
     return bundle_file
 
 
