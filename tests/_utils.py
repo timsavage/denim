@@ -43,9 +43,9 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(e_scope, a_scope,
             msg='Command scope does not match. Expected "%s" got "%s"' % (e_scope, a_scope))
         self.assertEqual(e_cmd, a_cmd,
-            msg='Command does not match. Expected "%s" got "%s"' % (e_cmd, a_cmd))
+            msg='Command does not match.\nExpected:\t"%s"\nActual:\t"%s"' % (e_cmd, a_cmd))
         self.assertDictEqual(e_kwargs, a_kwargs,
-            msg='Command keyword arguments do not match.\nExpected: %s\nActual: %s' % (e_kwargs, a_kwargs))
+            msg='Command keyword arguments do not match.\nExpected:\t%s\nActual:\t%s' % (e_kwargs, a_kwargs))
 
     def assertSingeCommand(self, command, _scope, **kwargs):
         user = kwargs.get('user')
