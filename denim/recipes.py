@@ -96,7 +96,7 @@ def create_standard_layout():
     system.change_owner(log_path)
 
 
-def standard_provision(extra_packages=[],
+def standard_provision(extra_packages=None,
                        install_packages=True,
                        required_packages=DEFAULT_PACKAGES,):
     """
@@ -110,6 +110,9 @@ def standard_provision(extra_packages=[],
     abort.
     """
     require('project_name', 'package_name', 'deploy_env')
+
+    if extra_packages is None:
+        extra_packages = []
 
     print colors.yellow("* Check correct packages are installed.")
     for package_name in required_packages + extra_packages:
