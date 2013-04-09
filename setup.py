@@ -1,3 +1,4 @@
+# coding=utf-8
 import os
 from setuptools import setup, find_packages
 import denim
@@ -9,7 +10,7 @@ def read(fname):
 setup(
     name='denim',
     version=denim.__version__,
-    packages= find_packages(exclude=('tests', 'tests.*')),
+    packages=find_packages(exclude=('tests', 'tests.*')),
     scripts=['bin/den'],
 
     install_requires=['fabric'],

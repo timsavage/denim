@@ -123,4 +123,4 @@ Development
 .. [5] Used to apply specific configuration based on deployment environment.
 
 """
-__version__ = '0.1.2b1'
+__version__ = '0.1.2.1b1'
