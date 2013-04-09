@@ -22,7 +22,7 @@ class TestServiceSupervisor(ApiTestCase):
     def test_manager_reload(self):
         supervisor.manager_reload()
 
-        self.assertSudo('supervisorctl reread', user=RootUser)
+        self.assertSudo('supervisorctl reload', user=RootUser)
 
     def test_start_default_service(self):
         supervisor.start()
