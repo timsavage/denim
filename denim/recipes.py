@@ -162,12 +162,14 @@ def standard_deploy(revision, skip_upload=False, noinput=False, use_pip_bundle=F
 
 
 def standard_django_deploy(noinput=False,
-                           enable_south_migrations=True):
+                           enable_south_migrations=True,
+                           symlink_setttings=True):
     """
     Standard django deployment
 
     :param noinput: do not ask for any input just take default action.
-    :param revision: Do checks with south.
+    :param enable_south_migrations: Do checks with south.
+    :param symlink_setttings: Use symlink process for settings.
 
     .. note::
         This section assumes ``standard_deploy`` was run.
@@ -181,8 +183,9 @@ def standard_django_deploy(noinput=False,
     with virtualenv.activate():
         print colors.yellow("* Setup Django deployment.")
 
-        print colors.cyan("** Symlink in environment settings.")
-        django.link_settings(revision)
+        if symlink_setttings:
+            print colors.cyan("** Symlink in environment settings.")
+            django.link_settings(revision)
 
         print colors.cyan("** Test deployment (./manage.py validate)..."),
         django.test_deploy(revision)
