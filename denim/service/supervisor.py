@@ -51,7 +51,7 @@ def manager_reload():
     Reload service manager daemon.
 
     """
-    utils.run_as('supervisorctl reread', use_sudo=True)
+    utils.run_as('supervisorctl reload', use_sudo=True)
 
 
 def manager_status():

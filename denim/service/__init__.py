@@ -97,6 +97,6 @@ def install_config(name_prefix=None):
     :param name_prefix: name prefix for configuration.
     """
     upload_config(name_prefix)
-    manager_restart()
+    manager_reload()
 
 __all__ = __proxy.methods
