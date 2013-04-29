@@ -55,6 +55,13 @@ revisions that are not unique (eg "default" for Mercurial).
 
 """)
 
+get_root = __proxy.method('get_root', doc=
+"""
+Obtain the root path of the current repository.
+
+""")
+
+
 @task
 @__proxy.local_method
 def tag_release(increment='0'):
@@ -98,5 +105,6 @@ def archive_app(revision, out_file=None):
 
     archive(revision, out_file, 'app', prefix='./')
     return out_file, revision_name
+
 
 __all__ = __proxy.methods

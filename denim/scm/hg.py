@@ -65,3 +65,11 @@ def get_revision_name(revision):
 
     """
     return get_hash(revision) if revision in ('default', ) else revision
+
+
+def get_root():
+    """
+    Get root path of current HG repository.
+
+    """
+    return local("hg root", capture=True)

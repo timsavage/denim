@@ -64,3 +64,11 @@ def get_revision_name(revision):
 
     """
     return get_hash(revision) if revision in ('master', ) else revision
+
+
+def get_root():
+    """
+    Get the root path of the current repository.
+    
+    """
+    return os.path.abspath(local("git rev-parse --show-cdup", capture=True))
