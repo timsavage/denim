@@ -2,6 +2,21 @@
 from denim.utils import local
 
 
+def commit(comment, file_name=None):
+    """
+    Commit into source control.
+
+    :param comment: comment for commit
+    :param file_name: name of file to commit. If not supplied will commit all
+        files.
+
+    """
+    if file_name:
+        local('git commit -m "%s" "%s"' % (escape_string(comment), file_name))
+    else:
+        local('git commit -m "%s"' % escape_string(comment))
+
+
 def tag(comment, tag_name):
     """
     Add a Git tag to the local repository.

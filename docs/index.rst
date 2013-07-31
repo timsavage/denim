@@ -12,6 +12,7 @@ Contents:
     :maxdepth: 2
 
     ref/index
+    ref/django
 
 
 Indices and tables

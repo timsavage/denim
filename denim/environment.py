@@ -38,6 +38,7 @@ class Proxy(object):
     Class to automate the proxying of modules. This is used so to allow
     projects to specify what tools they use within a project ie: Define the
     source control as GIT.
+
     """
     def __init__(self, key, globals, default=None):
         self.key = key
@@ -49,6 +50,7 @@ class Proxy(object):
     def get_env_module(self):
         """
         Get the module defined in environment.
+
         """
         module_name = api.env.get(self.key, self.default)
         if not module_name:
@@ -67,7 +69,9 @@ class Proxy(object):
     def get_env_method(self, name):
         """
         Get method from module defined in environment.
+
         :param name: name of the method.
+
         """
         module = self.get_env_module()
         try:
@@ -82,6 +86,7 @@ class Proxy(object):
         :param name: name of the method to proxy.
         :param task: apply fabric @task decorator to method.
         :param doc: doc string to use when proxying method.
+
         """
         self._methods.add(name)
 
@@ -104,8 +109,10 @@ class Proxy(object):
     def local_method(self, method):
         """
         Helper for defining local methods (adds to the method array)
+
         :param method:
         :return:
+
         """
         self._methods.add(method.__name__)
         return method

@@ -12,6 +12,7 @@ def manage(cmd, args=None, revision=None, noinput=True, use_sudo=True, user=Depl
     :param args: arguments to append.
     :param revision: version name that is being worked on.
     :param noinput: Do not ask for input.
+
     """
     args = args or []
     if noinput:
@@ -25,6 +26,7 @@ def manage(cmd, args=None, revision=None, noinput=True, use_sudo=True, user=Depl
 def test_deploy(revision=None):
     """
     Call manage.py validate to ensure deployment is working correctly.
+
     """
     manage('validate', revision=revision, noinput=False)
 
@@ -32,6 +34,7 @@ def test_deploy(revision=None):
 def collectstatic(revision=None, user=None):
     """
     Collect static files.
+
     """
     manage('collectstatic',
         revision=revision, user=user)
@@ -40,6 +43,7 @@ def collectstatic(revision=None, user=None):
 def syncdb(revision=None, **kwargs):
     """
     Run a database sync
+
     """
     manage('syncdb', revision=revision, **kwargs)
 
@@ -47,6 +51,7 @@ def syncdb(revision=None, **kwargs):
 def createsuperuser(username='', revision=None, **kwargs):
     """
     Run a database sync and migrate operation.
+
     """
     manage('createsuperuser', [username], revision=revision, noinput=False, **kwargs)
 
@@ -54,6 +59,7 @@ def createsuperuser(username='', revision=None, **kwargs):
 def link_settings(revision=None, user=None, **kwargs):
     """
     Put correct settings in place.
+
     """
     require('deploy_env')
     system.create_symlink(

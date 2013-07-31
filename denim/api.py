@@ -8,8 +8,8 @@ from denim import (scm, service, system, virtualenv, webserver)
 from denim.decorators import deploy_env
 
 
-@__api.task
-def help():
+@__api.task(name="help")
+def show_help():
     """
     Help on common operations.
     """

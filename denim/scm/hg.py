@@ -2,6 +2,25 @@
 from denim.utils import local
 
 
+def escape_string(value):
+    return value.replace('"', '\\"')
+
+
+def commit(comment, file_name=None):
+    """
+    Commit into source control.
+
+    :param comment: comment for commit
+    :param file_name: name of file to commit. If not supplied will commit all
+        files.
+
+    """
+    if file_name:
+        local('hg commit -m "%s" "%s"' % (escape_string(comment), file_name))
+    else:
+        local('hg commit -m "%s"' % escape_string(comment))
+
+
 def tag(comment, tag_name):
     """
     Add a Mercurial tag to the local repository.
@@ -10,7 +29,7 @@ def tag(comment, tag_name):
     :param tag_name: name of the tag.
 
     """
-    local('hg tag -m "%s" %s' % (comment, tag_name))
+    local('hg tag -m "%s" %s' % (escape_string(comment), tag_name))
 
 
 def archive(revision, out_file, sub_path, prefix=None):

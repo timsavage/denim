@@ -23,6 +23,7 @@ is_installed = __proxy.method('is_installed', False, doc=
 Check if a particular package has been installed.
 
 :param name: name of the package to check for.
+
 """)
 
 install = __proxy.method('install', False, doc=
@@ -30,6 +31,7 @@ install = __proxy.method('install', False, doc=
 Install a package.
 
 :param name: name of the package to install.
+
 """)
 
 __all__ = __proxy.methods

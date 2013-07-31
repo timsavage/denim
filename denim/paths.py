@@ -28,8 +28,7 @@ def deploy_path(sub_path=None):
     """
     require('project_name')
     deploy_path_root = env.get('deploy_path_root', '/opt/webapps')
-    return join_paths(deploy_path_root, env.project_name,
-        sub_path if sub_path else '')
+    return join_paths(deploy_path_root, env.project_name, sub_path if sub_path else '')
 
 
 def package_path(revision=None, sub_path=None):
@@ -44,8 +43,7 @@ def package_path(revision=None, sub_path=None):
     """
     if not revision:
         revision = env.get('revision', 'current')
-    return deploy_path(join_paths('app', revision,
-        sub_path if sub_path else ''))
+    return deploy_path(join_paths('app', revision, sub_path if sub_path else ''))
 
 
 def log_path():
@@ -139,8 +137,7 @@ def local_working_path(sub_path=None, file_name=None, ensure_exists=True):
         return path
 
 
-def local_config_file_options(service_name, name_prefix=None,
-                              extension='.conf'):
+def local_config_file_options(service_name, name_prefix=None, extension='.conf'):
     """
     Local names of a service config file with fallbacks.
 
@@ -189,8 +186,7 @@ def local_config_file_options(service_name, name_prefix=None,
         ]
 
 
-def local_config_file(service_name, name_prefix=None, abort_if_not_found=True,
-                      extension='.conf'):
+def local_config_file(service_name, name_prefix=None, abort_if_not_found=True, extension='.conf'):
     """
     Determine the correct local config file, this method will try several
     options as resolved by `local_config_file_options` and return the path to

@@ -6,6 +6,16 @@ from denim import utils
 
 __proxy = Proxy('deploy_scm', globals(), 'hg')
 
+commit = __proxy.method('commit', doc=
+"""
+Commit into source control.
+
+:param comment: comment for commit
+:param file_name: name of file to commit. If not supplied will commit all
+    files.
+
+""")
+
 tag = __proxy.method('tag', doc=
 """
 Add a tag to the local repository.

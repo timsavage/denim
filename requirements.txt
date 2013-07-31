@@ -1,4 +1,4 @@
 # Requirements for development (installation requirements defined in setup.py)
 fabric
 nose
-coverage
+boto

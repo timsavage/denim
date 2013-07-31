@@ -34,6 +34,7 @@ def create_system_user(user=None, home=None):
 
     :return: True if user is created; else False to indicate user already
         exists.
+
     """
     if user is None:
         user = env.deploy_user
@@ -55,14 +56,14 @@ def change_owner(path, recursive=False, user=None):
     :param recursive: if the path references a folder recurs through all sub
         folders.
     :param user: name of the user to make owner; defaults to the deploy_user.
+
     """
     if user is None:
         user = env.deploy_user
     utils.run_as('chown %s %s. %s' % ('-R' if recursive else '', user, path), use_sudo=True)
 
 
-def create_symlink(target_path, link_path, replace_existing=True,
-                   *args, **kwargs):
+def create_symlink(target_path, link_path, replace_existing=True, *args, **kwargs):
     """
     Create a symlink on remote server.
 
@@ -70,6 +71,7 @@ def create_symlink(target_path, link_path, replace_existing=True,
     :param link_path: location of symlink.
     :param replace_existing: overwrite an existing symlink; else fail if link
         already exists.
+
     """
     if replace_existing:
         remove_file(link_path, *args, **kwargs)
