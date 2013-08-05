@@ -51,19 +51,19 @@ class JoinPathsTestCase(PathTestCaseBase):
 class DeployPathTestCase(PathTestCaseBase):
     def testDefaultPath(self):
         self.assertEqual(
-            '/opt/webapps/test-project',
+            '/opt/www/test-project',
             target.deploy_path()
         )
 
     def testEmptySubPath(self):
         self.assertEqual(
-            '/opt/webapps/test-project',
+            '/opt/www/test-project',
             target.deploy_path('')
         )
 
     def testSubPath(self):
         self.assertEqual(
-            '/opt/webapps/test-project/var',
+            '/opt/www/test-project/var',
             target.deploy_path('var')
         )
 
@@ -71,37 +71,37 @@ class DeployPathTestCase(PathTestCaseBase):
 class PackagePathTestCase(PathTestCaseBase):
     def testDefaultPath(self):
         self.assertEqual(
-            '/opt/webapps/test-project/app/current',
+            '/opt/www/test-project/app/current',
             target.package_path()
         )
 
     def testEmptyReleaseName(self):
         self.assertEqual(
-            '/opt/webapps/test-project/app/current',
+            '/opt/www/test-project/app/current',
             target.package_path('')
         )
 
     def testWithRelease(self):
         self.assertEqual(
-            '/opt/webapps/test-project/app/release-1.2.3.4',
+            '/opt/www/test-project/app/release-1.2.3.4',
             target.package_path('release-1.2.3.4')
         )
 
     def testWithEmptySubPath(self):
         self.assertEqual(
-            '/opt/webapps/test-project/app/release-1.2.3.4',
+            '/opt/www/test-project/app/release-1.2.3.4',
             target.package_path('release-1.2.3.4', '')
         )
 
     def testWithEmptyReleaseAndSubPath(self):
         self.assertEqual(
-            '/opt/webapps/test-project/app/current',
+            '/opt/www/test-project/app/current',
             target.package_path('', '')
         )
 
     def testWithSubPath(self):
         self.assertEqual(
-            '/opt/webapps/test-project/app/current/var',
+            '/opt/www/test-project/app/current/var',
             target.package_path(sub_path='var')
         )
 
@@ -109,13 +109,13 @@ class PackagePathTestCase(PathTestCaseBase):
 class OtherDeployPathsTestCase(PathTestCaseBase):
     def testLogPath(self):
         self.assertEqual(
-            '/var/log/webapps/test-project/test_project',
+            '/var/log/www/test-project/test_project',
             target.log_path()
         )
 
     def testWSGISocket(self):
         self.assertEqual(
-            '/opt/webapps/test-project/var/wsgi.sock',
+            '/opt/www/test-project/var/wsgi.sock',
             target.wsgi_socket_path()
         )
 
@@ -261,38 +261,6 @@ class LocalWorkingPathTestCase(PathTestCaseBase):
         self.assertEqual(
             expected,
             target.local_working_path(file_name='bar.txt')
-        )
-
-
-
-class LocalConfigFileOptionsTestCase(PathTestCaseBase):
-    def testDefaultPath(self):
-        self.assertEqual(
-            [
-                self.make_local_path('conf/nginx/test.conf'),
-                self.make_local_path('conf/nginx.conf'),
-            ],
-            target.local_config_file_options('nginx')
-        )
-
-    def testWithNamePrefix(self):
-        self.assertEqual(
-            [
-                self.make_local_path('conf/nginx/alt-test.conf'),
-                self.make_local_path('conf/nginx/test.conf'),
-                self.make_local_path('conf/alt-nginx.conf'),
-                self.make_local_path('conf/nginx.conf'),
-            ],
-            target.local_config_file_options('nginx', 'alt')
-        )
-
-    def testWithAlternateExtension(self):
-        self.assertEqual(
-            [
-                self.make_local_path('conf/nginx/test.rc'),
-                self.make_local_path('conf/nginx.rc'),
-            ],
-            target.local_config_file_options('nginx', extension='.rc')
         )
 
 

@@ -1,5 +1,5 @@
 import unittest
-from denim.utils import set_api_wrapper, api_wrapper
+from denim.utils import replace_api_wrapper
 
 
 class Result(object):
@@ -34,13 +34,14 @@ class TestApiWrapper(object):
         self.commands.append(('local', command, kwargs))
         return Result()
 
-set_api_wrapper(TestApiWrapper())
+replace_api_wrapper(TestApiWrapper())
 
 
 class ApiTestCase(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(ApiTestCase, self).__init__(*args, **kwargs)
-        self.api = api_wrapper()
+        from denim.utils import api
+        self.api = api
 
     def setUp(self):
         self.api.reset()

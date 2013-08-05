@@ -13,29 +13,33 @@ def join_paths(a, *p):
     Any path in *p that starts with / will be have the / removed.
 
     """
-    p = map(lambda i: i.lstrip('/'), p)
-    return posixpath.join(a, *p).rstrip('/')
+    return posixpath.join(a, *(i.lstrip('/') for i in p)).rstrip('/')
 
 
-## Known paths ##############
+## Remote paths ##############
 
 def deploy_path(sub_path=None):
     """
-    Deployment root path, the root of the deployment structure.
+    Deployment root path on the remote host, this is the root path from which other paths are built.
 
     :param sub_path: A path below the package path.
 
     """
     require('project_name')
-    deploy_path_root = env.get('deploy_path_root', '/opt/webapps')
+    deploy_path_root = env.get('deploy_path_prefix', '/opt/www')
     return join_paths(deploy_path_root, env.project_name, sub_path if sub_path else '')
 
 
-def package_path(revision=None, sub_path=None):
+def application_path(revision=None, sub_path=None):
     """
-    Package path, the path were the python application package is deployed to.
+    Application path, the path were the python application package is deployed to.
 
-    Uses a number of fall-backs to get the current path.
+    Format of the application path:
+
+        DEPLOY_PATH/app/REVISION/SUB_PATH
+
+    Where REVISION is replaced with "current" if no revision is defined (either passed into the method or defined by the
+    current environment) and SUB_PATH is replaced with an empty string if no path is defined).
 
     :param revision: A specific revision name.
     :param sub_path: A path below the package path.
@@ -43,7 +47,14 @@ def package_path(revision=None, sub_path=None):
     """
     if not revision:
         revision = env.get('revision', 'current')
-    return deploy_path(join_paths('app', revision, sub_path if sub_path else ''))
+    return deploy_path(join_paths('app', revision, sub_path or ''))
+
+
+def package_path(*args, **kwargs):
+    import warnings
+    warnings.warn("The package_path method has been deprecated in favour of application_path.",
+                  category=DeprecationWarning)
+    return application_path(*args, **kwargs)
 
 
 def log_path():
@@ -52,7 +63,7 @@ def log_path():
 
     """
     require('project_name', 'package_name')
-    log_path_root = env.get('log_path_root', '/var/log/webapps')
+    log_path_root = env.get('log_path_prefix', '/var/log/www')
     return join_paths(log_path_root, env.project_name, env.package_name)
 
 
@@ -96,8 +107,7 @@ def join_local_paths(a, *p):
     removed.
 
     """
-    p = map(lambda i: i.lstrip(os.path.sep), p)
-    return os.path.normpath(os.path.join(a, *p).rstrip(os.path.sep))
+    return os.path.normpath(os.path.join(a, *(i.lstrip('/') for i in p)).rstrip(os.path.sep))
 
 
 def local_path(sub_path=None):
@@ -109,7 +119,7 @@ def local_path(sub_path=None):
     """
     require('real_fabfile')
     fabfile_path = os.path.dirname(env.real_fabfile)
-    return join_local_paths(fabfile_path, sub_path if sub_path else '')
+    return join_local_paths(fabfile_path, sub_path or '')
 
 
 def local_working_path(sub_path=None, file_name=None, ensure_exists=True):
@@ -125,6 +135,10 @@ def local_working_path(sub_path=None, file_name=None, ensure_exists=True):
     :param ensure_exists: ensures that the path exists.
 
     """
+    import warnings
+    warnings.warn("This method should really make use of os.mktmp or similar.",
+                  category=DeprecationWarning)
+
     path = local_path(env.get('working_path', 'den'))
     if sub_path:
         path = join_local_paths(path, sub_path)
@@ -137,7 +151,19 @@ def local_working_path(sub_path=None, file_name=None, ensure_exists=True):
         return path
 
 
-def local_config_file_options(service_name, name_prefix=None, extension='.conf'):
+SEARCH_PATHS = (
+    'conf/%(name)s/%(env)s%(ext)s',
+    'conf/%(name)s%(ext)s'
+)
+PREFIXED_SEARCH_PATHS = (
+    'conf/%(name)s/%(prefix)s-%(env)s%(ext)s',
+    'conf/%(name)s/%(env)s%(ext)s',
+    'conf/%(prefix)s-%(name)s%(ext)s',
+    'conf/%(name)s%(ext)s'
+)
+
+
+def _local_config_file_options(service_name, name_prefix=None, extension='.conf'):
     """
     Local names of a service config file with fallbacks.
 
@@ -172,18 +198,9 @@ def local_config_file_options(service_name, name_prefix=None, extension='.conf')
         'env': env.deploy_env,
         'ext': extension,
     }
-    if name_prefix:
-        return [
-            local_path('conf/%(name)s/%(prefix)s-%(env)s%(ext)s' % path_elements),
-            local_path('conf/%(name)s/%(env)s%(ext)s' % path_elements),
-            local_path('conf/%(prefix)s-%(name)s%(ext)s' % path_elements),
-            local_path('conf/%(name)s%(ext)s' % path_elements),
-        ]
-    else:
-        return [
-            local_path('conf/%(name)s/%(env)s%(ext)s' % path_elements),
-            local_path('conf/%(name)s%(ext)s' % path_elements),
-        ]
+    search_paths = PREFIXED_SEARCH_PATHS if name_prefix else SEARCH_PATHS
+    for search_path in search_paths:
+        yield local_path(search_path % path_elements)
 
 
 def local_config_file(service_name, name_prefix=None, abort_if_not_found=True, extension='.conf'):
@@ -199,16 +216,17 @@ def local_config_file(service_name, name_prefix=None, abort_if_not_found=True, e
     :param extension: file extension of config files.
 
     """
-    file_options = local_config_file_options(service_name, name_prefix, extension)
-    for file_option in file_options:
-        if os.path.exists(file_option):
-            return file_option
+    searched_paths = []
+    for path in _local_config_file_options(service_name, name_prefix, extension):
+        if os.path.exists(path):
+            return path
+        searched_paths.append(path)
     if abort_if_not_found:
         abort("""
 Not able to find a configuration file for service "%s".
 
 Searched path(s): %s
-""" % (service_name, file_options))
+""" % (service_name, searched_paths))
 
 
 ## Context managers #########
@@ -223,12 +241,19 @@ def cd_deploy(*args, **kwargs):
     return cd(deploy_path(*args, **kwargs))
 
 
-def cd_package(*args, **kwargs):
+def cd_application(*args, **kwargs):
     """
-    Context manager to change to a package path.
+    Context manager to change to a application path.
 
     :revision: Name of revision; default is *env.revision* or *current*.
-    :sub_path: A path within the package.
+    :sub_path: A path within the application package.
 
     """
-    return cd(package_path(*args, **kwargs))
+    return cd(application_path(*args, **kwargs))
+
+
+def cd_package(*args, **kwargs):
+    import warnings
+    warnings.warn("The cd_package method has been deprecated in favour of cd_application.",
+                  category=DeprecationWarning)
+    return cd_application(*args, **kwargs)
