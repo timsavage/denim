@@ -1,0 +1,17 @@
+# Unix cruft
+*~
+
+# Python cruft
+*.py[co]
+*.egg-info
+
+# IDE cruft
+.idea/*
+atlassian-ide-plugin.xml
+
+# Project artifacts
+build*
+dist*
+docs/*.html
+MANIFEST
+dev.db

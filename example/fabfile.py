@@ -20,7 +20,7 @@ env.package_name = 'denim_demo'
 
 ## Deployment environments ############
 
-@task(alias='prod')
+@deploy_env(alias='prod')
 def production():
     """
     Environment configuration for production.
@@ -28,7 +28,7 @@ def production():
     env.deploy_env = 'production'
     env.hosts = ['192.168.1.10', '192.168.1.12']
 
-@task
+@deploy_env
 def staging():
     """
     Environment configuration for staging.
