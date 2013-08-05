@@ -1,10 +1,10 @@
 # -*- encoding:utf8 -*-
 from datetime import date
-from fabric import api
+from fabric import api as _api
 from fabric.api import settings, hide
 from denim.constants import RootUser
 
-__all__ = ('run_as', 'run_test', 'generate_version')
+__all__ = ('run_as', 'run_test', 'local', 'generate_version')
 
 
 class ApiWrapper(object):
@@ -13,33 +13,21 @@ class ApiWrapper(object):
     testing.
     """
     def sudo(self, command, **kwargs):
-        return api.sudo(command, **kwargs)
+        return _api.sudo(command, **kwargs)
 
     def run(self, command, **kwargs):
-        return api.run(command, **kwargs)
+        return _api.run(command, **kwargs)
 
     def local(self, command, **kwargs):
-        return api.local(command, **kwargs)
+        return _api.local(command, **kwargs)
 
 
-__api_wrapper = ApiWrapper()
-
-def set_api_wrapper(wrapper):
-    """
-    Hook to replace API wrapper. Used for testing.
-    :param wrapper: Wrapper class to replace with.
-    """
-    global __api_wrapper
-    __api_wrapper = wrapper
+api = ApiWrapper()
 
 
-def api_wrapper():
-    """
-    Get instance of the API wrapper.
-    :return: Current instance of API wrapper.
-    """
-    global __api_wrapper
-    return __api_wrapper
+def replace_api_wrapper(api_wrapper):
+    global api
+    api = api_wrapper
 
 
 def run_as(command, use_sudo=False, user=RootUser, **kwargs):
@@ -51,7 +39,6 @@ def run_as(command, use_sudo=False, user=RootUser, **kwargs):
     :param user: if using sudo run command as this user; default None (root).
 
     """
-    api = api_wrapper()
     if hasattr(user, 'sudo_identity'):
         user = user.sudo_identity()
 
@@ -65,10 +52,10 @@ def local(command, **kwargs):
     """
     A wrapper around the local command to push commands through the API
     wrapper to capture the output.
+
     :param command:
 
     """
-    api = api_wrapper()
     return api.local(command, **kwargs)
 
 
@@ -83,6 +70,7 @@ def run_test(command, hide_groups=('warnings', ), use_sudo=False, user=None):
     :param use_sudo: run this command with sudo; default is False.
     :param user: if using sudo run command as this user; default None (root).
     :return: result of command as returned by `run` or `sudo` Fabric commands.
+
     """
     with settings(warn_only=True):
         with hide(*hide_groups):
