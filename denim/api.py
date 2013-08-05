@@ -1,14 +1,16 @@
-from fabric import api as __api
+from fabric import api as _api
 
 # Setup some default values.
-__api.env.deploy_user = 'webapps'
+_api.env.deploy_user = 'webapps'
 
-from denim.paths import (cd_deploy, cd_package, deploy_path, package_path)
+from denim.paths import (cd_deploy, cd_application, deploy_path, application_path)
 from denim import (scm, service, system, virtualenv, webserver)
 from denim.decorators import deploy_env
 
+# Pending deprecation
+from denim.paths import (cd_package, package_path)
 
-@__api.task(name="help")
+@_api.task(name="help")
 def show_help():
     """
     Help on common operations.
@@ -34,8 +36,8 @@ Status of service:
     }
 
 
-@__api.task
-def environment():
+@_api.task
+def environments():
     """
     Environments defined in fabfile.
     """
