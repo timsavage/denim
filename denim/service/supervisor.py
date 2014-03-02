@@ -1,7 +1,9 @@
 # -*- encoding:utf8 -*-
 from fabric import colors
 from fabric.api import put, env
+
 from denim import paths, utils
+
 
 SERVICE_NAME = 'supervisor'
 
@@ -99,6 +101,14 @@ def restart(service_name=None):
     if not service_name:
         service_name = env.project_name
     utils.run_as('supervisorctl restart %s' % service_name, use_sudo=True)
+
+
+def reload():
+    """
+    Reload proces config.
+
+    """
+    utils.run_as('supervisorctl reload', use_sudo=True)
 
 
 def status(service_name=None):
