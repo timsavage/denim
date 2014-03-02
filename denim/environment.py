@@ -4,6 +4,8 @@ from fabric.tasks import WrappedCallableTask
 
 
 _registered_environments = []
+
+
 def add_environment(environment):
     global _registered_environments
     _registered_environments.append(environment)
