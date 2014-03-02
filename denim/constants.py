@@ -6,7 +6,7 @@ class RootUser(object):
     """
     Class to define Root user.
     """
-    uid=0
+    uid = 0
 
     @classmethod
     def sudo_identity(cls):

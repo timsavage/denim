@@ -3,12 +3,6 @@ from fabric import api as _api
 # Setup some default values.
 _api.env.deploy_user = 'webapps'
 
-from denim.paths import (cd_deploy, cd_application, deploy_path, application_path)
-from denim import (scm, service, system, virtualenv, webserver)
-from denim.decorators import deploy_env
-
-# Pending deprecation
-from denim.paths import (cd_package, package_path)
 
 @_api.task(name="help")
 def show_help():
