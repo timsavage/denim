@@ -1,8 +1,11 @@
 # -*- encoding:utf8 -*-
 from datetime import date
+
 from fabric import api as _api
 from fabric.api import settings, hide
+
 from denim.constants import RootUser
+
 
 __all__ = ('run_as', 'run_test', 'local', 'generate_version')
 
@@ -91,3 +94,10 @@ def generate_version(increment=None):
         except ValueError:
             raise ValueError("Increment must be an integer value.")
     return version
+
+
+def escape_string(value):
+    """
+    Escape a string for command line use.
+    """
+    return value.replace('"', '\\"')
