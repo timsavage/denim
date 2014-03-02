@@ -1,7 +1,10 @@
 # -*- encoding:utf8 -*-
 import os
+
 from fabric.api import env, put, require
+
 from denim import paths, scm, utils
+
 
 __all__ = ('install_requirements', )
 
@@ -16,20 +19,20 @@ def install_requirements(revision=None, path_to_requirements=None,
     manager.
 
     :path_to_requirements: path to requirements file; default is:
-        `*deploy_path*/app/*revision*/requirements.txt`
+        `*release_path*/requirements.txt`
     :upgrade: when installing requirements fetch updates.
     :revision: A specific revision name.
 
     """
     if not path_to_requirements:
-        path_to_requirements = paths.package_path(revision, 'requirements.txt')
+        path_to_requirements = paths.release_path(revision, 'requirements.txt')
     parameters = ['install']
-    if env.has_key('proxy'):
+    if 'proxy' in env:
         parameters.append('--proxy=%s' % env.proxy)
     if upgrade:
         parameters.append('--upgrade')
     if not path_to_log:
-        path_to_log = paths.deploy_path('var/pip.log')
+        path_to_log = paths.project_path('var/pip.log')
     parameters.append('-r %s' % path_to_requirements)
     utils.run_as('pip ' + ' '.join(parameters), use_sudo, user)
 
