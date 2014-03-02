@@ -1,14 +1,16 @@
 # -*- encoding:utf8 -*-
 import posixpath
 import os
+
 from fabric.api import env, cd, require, abort
+
 
 
 ## Utils ####################
 
 def join_paths(a, *p):
     """
-    Joins multiple paths land ensures that the '/' is removed from the end.
+    Joins multiple paths and ensures that the '/' is removed from the end.
 
     Any path in *p that starts with / will be have the / removed.
 
@@ -18,43 +20,40 @@ def join_paths(a, *p):
 
 ## Remote paths ##############
 
-def deploy_path(sub_path=None):
+def project_path(sub_path=None):
     """
-    Deployment root path on the remote host, this is the root path from which other paths are built.
+    Project root path on the remote host, this is the root path from which other paths are built.
 
     :param sub_path: A path below the package path.
 
     """
     require('project_name')
-    deploy_path_root = env.get('deploy_path_prefix', '/opt/www')
-    return join_paths(deploy_path_root, env.project_name, sub_path if sub_path else '')
+    project_path_root = env.get('project_path_prefix', '/opt')
+    return join_paths(project_path_root, env.project_name, sub_path if sub_path else '')
 
 
-def application_path(revision=None, sub_path=None):
+def release_path(revision=None, sub_path=None):
     """
-    Application path, the path were the python application package is deployed to.
+    Path to the to a particular release.
 
-    Format of the application path:
+    Format of the release path:
 
-        DEPLOY_PATH/app/REVISION/SUB_PATH
+        PROJECT_PATH/releases/REVISION/SUB_PATH
 
-    Where REVISION is replaced with "current" if no revision is defined (either passed into the method or defined by the
-    current environment) and SUB_PATH is replaced with an empty string if no path is defined).
+    If a revision is not provided then the "current" path will be returned:
+
+        PROJECT_PATH/current/SUB_PATH
 
     :param revision: A specific revision name.
     :param sub_path: A path below the package path.
 
     """
     if not revision:
-        revision = env.get('revision', 'current')
-    return deploy_path(join_paths('app', revision, sub_path or ''))
-
-
-def package_path(*args, **kwargs):
-    import warnings
-    warnings.warn("The package_path method has been deprecated in favour of application_path.",
-                  category=DeprecationWarning)
-    return application_path(*args, **kwargs)
+        revision = env.get('revision', None)
+    if revision:
+        return project_path(join_paths('releases', revision, sub_path or ''))
+    else:
+        return project_path(join_paths('current', sub_path or ''))
 
 
 def log_path():
@@ -62,9 +61,9 @@ def log_path():
     Path where log files are located.
 
     """
-    require('project_name', 'package_name')
-    log_path_root = env.get('log_path_prefix', '/var/log/www')
-    return join_paths(log_path_root, env.project_name, env.package_name)
+    require('project_name')
+    log_path_root = env.get('log_path_prefix', '/var/log')
+    return join_paths(log_path_root, env.project_name)
 
 
 def wsgi_socket_path():
@@ -72,7 +71,7 @@ def wsgi_socket_path():
     Path of WSGI socket, this is used to connect web-server to application.
 
     """
-    return deploy_path('var/wsgi.sock')
+    return project_path('var/wsgi.sock')
 
 
 def remote_config_file(base_path, name_prefix=None, extension='.conf'):
@@ -231,29 +230,22 @@ Searched path(s): %s
 
 ## Context managers #########
 
-def cd_deploy(*args, **kwargs):
+def cd_project(*args, **kwargs):
     """
-    Context manager to change to the deploy path.
+    Context manager to change to the *project_path*.
 
-    :sub_path: A path below the package path.
-
-    """
-    return cd(deploy_path(*args, **kwargs))
-
-
-def cd_application(*args, **kwargs):
-    """
-    Context manager to change to a application path.
-
-    :revision: Name of revision; default is *env.revision* or *current*.
-    :sub_path: A path within the application package.
+    :sub_path: A path below the project path.
 
     """
-    return cd(application_path(*args, **kwargs))
+    return cd(project_path(*args, **kwargs))
 
 
-def cd_package(*args, **kwargs):
-    import warnings
-    warnings.warn("The cd_package method has been deprecated in favour of cd_application.",
-                  category=DeprecationWarning)
-    return cd_application(*args, **kwargs)
+def cd_release(*args, **kwargs):
+    """
+    Context manager to change to a release path.
+
+    :revision: Name of revision; default is *env.revision*
+    :sub_path: A path within the release package.
+
+    """
+    return cd(release_path(*args, **kwargs))

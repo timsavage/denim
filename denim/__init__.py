@@ -8,12 +8,14 @@
   _/_/_/      _/_/_/  _/    _/  _/  _/    _/    _/        _/    _/  _/_/_/_/
 
 
-A `Fabric <http://www.fabfile.org>`_ deployment strategy for Python web
+A `Fabric <http://www.fabfile.org>`_ deployment strategy for Python
 applications.
 
-Denim has been primarily developed to support Django web applications, deployed
-to Debian GNU/Linux (and derivative) platforms. With tools to support nginx,
-supervisor, virtual env, gunicorn, pip etc.
+Denim has been developed to support Python applications in a similar manor as
+capistrano supports Ruby applications. While most methods will work with any
+distribution of GNU/Linux, Denim was developed to primarily work with
+Debian GNU/Linux (and derivative) distribution. With tools to support nginx,
+supervisor, virtualenv, gunicorn, pip etc.
 
 Designed to provide a rich tool-set built on top of and working with the
 existing functionality provided by Fabric. Get up and running quickly with
@@ -30,9 +32,9 @@ Django applications that lets you deploy straight away
 The strategy is designed to take a freshly deployed server and provision,
 deploy and activate your application, using best practices.
 
-By default your application will run as the user *webapps* with a ``/bin/false``
-shell and write access to limited parts of the filesystem. All code is owned by
-*root*.
+By default your application will run as the user based on the
+*env.project_name* variable with a ``/bin/false`` shell and write access to
+limited parts of the filesystem. All code is owned by *root*.
 
 
 Folder Structure
@@ -64,14 +66,14 @@ Deployment
 ----------
 
 +------------------------------------------------+-------------------------------------------+
-| /opt/webapps/*project_name*                    | Deploy path                               |
+| /opt/*project_name*                            | Project path                              |
 +-+----------------------------------------------+-------------------------------------------+
-| | app                                          | Application package deploy path           |
+| | releases                                     | Path of all releases                      |
 +-+-+--------------------------------------------+-------------------------------------------+
-|   | current                                    | The current package version [1]_          |
-+---+--------------------------------------------+-------------------------------------------+
 |   | *revision*/*package_name*                  | The revision and application package      |
 +-+-+--------------------------------------------+-------------------------------------------+
+| | current                                      | The current active release                |
++-+----------------------------------------------+-------------------------------------------+
 | | bin                                          | Binary folder [2]_                        |
 +-+----------------------------------------------+-------------------------------------------+
 | | include                                      | Include folder [2]_                       |
@@ -79,20 +81,18 @@ Deployment
 | | lib                                          | Lib folder [2]_                           |
 +-+----------------------------------------------+-------------------------------------------+
 | | public                                       | Public web root for web server [3]_       |
-+-+-+--------------------------------------------+-------------------------------------------+
-|   | media                                      | Application content or uploaded data      |
-+---+--------------------------------------------+-------------------------------------------+
-|   | static                                     | Static application content                |
-+-+-+--------------------------------------------+-------------------------------------------+
++-+----------------------------------------------+-------------------------------------------+
 | | var                                          | Application variable data [3]_            |
 +-+-+--------------------------------------------+-------------------------------------------+
+|   | pids                                       | Any application PIDS                      |
++---+--------------------------------------------+-------------------------------------------+
 |   | wsgi.sock                                  | WSGI socket                               |
 +---+--------------------------------------------+-------------------------------------------+
-| /var/log/webapps/*project_name*/*package_name* | Project log path [3]_                     |
+| /var/log/*project_name*                        | Project log path [3]_                     |
 +------------------------------------------------+-------------------------------------------+
 
 .. [1] Symlink to the current revision.
-.. [2] Virtualenv created folders.
+.. [2] Virtualenv created folders (if virtualenv is in use).
 .. [3] Writable by application user.
 
 Development
@@ -101,12 +101,8 @@ Development
 +--------------------------------+--------------------------------+
 | app                            | Application source root        |
 +-+------------------------------+--------------------------------+
-| | *package_name*               | Application package [4]_       |
-+-+-+----------------------------+--------------------------------+
-|   | deployment                 | Deployment settings folder     |
-+---+-+--------------------------+--------------------------------+
-|     | settings.*deploy_env*.py | Environment configuration [5]_ |
-+-+---+--------------------------+--------------------------------+
+| | *package_name*               | Application package            |
++-+------------------------------+--------------------------------+
 | | requirements.txt             | PIP requirements file          |
 +-+------------------------------+--------------------------------+
 | conf                           | Configuration                  |
@@ -115,13 +111,12 @@ Development
 +-+------------------------------+--------------------------------+
 | | nginx                        | Nginx configuration            |
 +-+-+----------------------------+--------------------------------+
-|   | nginx.*deploy_env*.conf    | Environment configuration [5]_ |
+|   | nginx.*deploy_env*.conf    | Environment configuration [4]_ |
 +---+----------------------------+--------------------------------+
 | fabfile.py                     | Project fabric definition file |
 +-+------------------------------+--------------------------------+
 
-.. [4] This structure is based on Django 1.4.
-.. [5] Used to apply specific configuration based on deployment environment.
+.. [4] Used to apply specific configuration based on deployment environment.
 
 """
-__version__ = '0.1.2.1b1'
+__version__ = '0.2'

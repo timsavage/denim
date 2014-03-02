@@ -1,7 +1,9 @@
 # -*- encoding:utf8 -*-
 import unittest
 import os
+
 from fabric import api
+
 import denim.paths as target
 
 
@@ -51,71 +53,71 @@ class JoinPathsTestCase(PathTestCaseBase):
 class DeployPathTestCase(PathTestCaseBase):
     def testDefaultPath(self):
         self.assertEqual(
-            '/opt/www/test-project',
-            target.deploy_path()
+            '/opt/test-project',
+            target.project_path()
         )
 
     def testEmptySubPath(self):
         self.assertEqual(
-            '/opt/www/test-project',
-            target.deploy_path('')
+            '/opt/test-project',
+            target.project_path('')
         )
 
     def testSubPath(self):
         self.assertEqual(
-            '/opt/www/test-project/var',
-            target.deploy_path('var')
+            '/opt/test-project/var',
+            target.project_path('var')
         )
 
 
 class PackagePathTestCase(PathTestCaseBase):
     def testDefaultPath(self):
         self.assertEqual(
-            '/opt/www/test-project/app/current',
-            target.package_path()
+            '/opt/test-project/current',
+            target.release_path()
         )
 
     def testEmptyReleaseName(self):
         self.assertEqual(
-            '/opt/www/test-project/app/current',
-            target.package_path('')
+            '/opt/test-project/current',
+            target.release_path('')
         )
 
     def testWithRelease(self):
         self.assertEqual(
-            '/opt/www/test-project/app/release-1.2.3.4',
-            target.package_path('release-1.2.3.4')
+            '/opt/test-project/releases/release-1.2.3.4',
+            target.release_path('release-1.2.3.4')
         )
 
     def testWithEmptySubPath(self):
         self.assertEqual(
-            '/opt/www/test-project/app/release-1.2.3.4',
-            target.package_path('release-1.2.3.4', '')
+            '/opt/test-project/releases/release-1.2.3.4',
+            target.release_path('release-1.2.3.4', '')
         )
 
     def testWithEmptyReleaseAndSubPath(self):
         self.assertEqual(
-            '/opt/www/test-project/app/current',
-            target.package_path('', '')
+            '/opt/test-project/current',
+            target.release_path('', '')
         )
 
     def testWithSubPath(self):
         self.assertEqual(
-            '/opt/www/test-project/app/current/var',
-            target.package_path(sub_path='var')
+            '/opt/test-project/current/var',
+            target.release_path(sub_path='var')
         )
 
 
 class OtherDeployPathsTestCase(PathTestCaseBase):
     def testLogPath(self):
         self.assertEqual(
-            '/var/log/www/test-project/test_project',
+            '/var/log/test-project',
             target.log_path()
         )
 
     def testWSGISocket(self):
         self.assertEqual(
-            '/opt/www/test-project/var/wsgi.sock',
+            '/opt/test-project/var/wsgi.sock',
             target.wsgi_socket_path()
         )
 
