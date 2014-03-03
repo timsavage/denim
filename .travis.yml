@@ -1,0 +1,20 @@
+language: python
+
+python:
+  - "2.7"
+  - "3.3"
+
+branches:
+  only:
+    - master
+    - development
+
+install:
+  - pip install -r requirements.txt
+  - pip install coveralls
+
+script:
+  - nosetests -w tests --all-modules --with-coverage --cover-package denim
+
+after_success:
+  - coveralls
