@@ -18,6 +18,24 @@ Designed to provide a rich tool-set built on top of and working with the
 existing functionality provided by Fabric. Get up and running quickly with
 the default deployment strategy.
 
+.. image:: https://pypip.in/license/denim/badge.png
+    :target: https://pypi.python.org/pypi/denim/
+    :alt: License
+
+.. image:: https://pypip.in/v/denim/badge.png
+    :target: https://pypi.python.org/pypi/denim/
+
+.. image:: https://travis-ci.org/timsavage/denim.png?branch=master
+    :target: https://travis-ci.org/timsavage/denim
+    :alt: Travis CI Status
+
+.. image:: https://coveralls.io/repos/timsavage/denim/badge.png?branch=master
+    :target: https://coveralls.io/r/timsavage/denim?branch=master
+    :alt: Coveralls
+
+.. image:: https://requires.io/github/timsavage/denim/requirements.png?branch=master
+    :target: https://requires.io/github/timsavage/denim/requirements/?branch=master
+    :alt: Requirements Status
 
 ====================
 The default strategy
