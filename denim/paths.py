@@ -31,6 +31,8 @@ def project_path(sub_path=None):
     project_path_root = env.get('project_path_prefix', '/opt')
     return join_paths(project_path_root, env.project_name, sub_path if sub_path else '')
 
+deploy_path = project_path
+
 
 def release_path(revision=None, sub_path=None):
     """
@@ -239,6 +241,8 @@ def cd_project(*args, **kwargs):
     """
     return cd(project_path(*args, **kwargs))
 
+cd_deploy = cd_project
+
 
 def cd_release(*args, **kwargs):
     """
@@ -249,3 +253,5 @@ def cd_release(*args, **kwargs):
 
     """
     return cd(release_path(*args, **kwargs))
+
+cd_package = cd_release

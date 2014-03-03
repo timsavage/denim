@@ -1,4 +1,5 @@
 import unittest
+
 from denim.utils import replace_api_wrapper
 
 
@@ -38,6 +39,10 @@ replace_api_wrapper(TestApiWrapper())
 
 
 class ApiTestCase(unittest.TestCase):
+    @property
+    def __test__(self):
+        return self is not ApiTestCase
+
     def __init__(self, *args, **kwargs):
         super(ApiTestCase, self).__init__(*args, **kwargs)
         from denim.utils import api
@@ -51,11 +56,11 @@ class ApiTestCase(unittest.TestCase):
         a_scope, a_cmd, a_kwargs = actual_command
 
         self.assertEqual(e_scope, a_scope,
-            msg='Command scope does not match. Expected "%s" got "%s"' % (e_scope, a_scope))
+                         msg='Command scope does not match. Expected "%s" got "%s"' % (e_scope, a_scope))
         self.assertEqual(e_cmd, a_cmd,
-            msg='Command does not match.\nExpected:\t"%s"\nActual:\t"%s"' % (e_cmd, a_cmd))
+                         msg='Command does not match.\nExpected:\t"%s"\nActual:\t"%s"' % (e_cmd, a_cmd))
         self.assertDictEqual(e_kwargs, a_kwargs,
-            msg='Command keyword arguments do not match.\nExpected:\t%s\nActual:\t%s' % (e_kwargs, a_kwargs))
+                             msg='Command keyword arguments do not match.\nExpected:\t%s\nActual:\t%s' % (e_kwargs, a_kwargs))
 
     def assertSingeCommand(self, command, _scope, **kwargs):
         user = kwargs.get('user')
