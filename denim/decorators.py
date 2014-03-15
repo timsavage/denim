@@ -24,3 +24,26 @@ def deploy_env(*args, **kwargs):
         return task_class(func, *args, **kwargs)
 
     return wrapper if invoked else wrapper(func)
+
+
+class cached_property(object):  # noqa
+    """
+    Acts like a standard class `property` except return values cached.
+    """
+    def __init__(self, func):
+        self.func = func
+        self.__doc__ = func.__doc__
+        self.__name__ = func.__name__
+        self.__module__ = func.__module__
+
+    def __get__(self, instance, owner):
+        try:
+            value = instance._cache[self.__name__]
+        except (KeyError, AttributeError):
+            value = self.func(instance)
+            try:
+                cache = instance._cache
+            except AttributeError:
+                cache = instance._cache = {}
+            cache[self.__name__] = value
+        return value
