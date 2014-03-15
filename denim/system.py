@@ -2,6 +2,7 @@
 from fabric.api import env, settings, hide
 from fabric.contrib import files
 
+from denim.constants import DeployUser
 from denim import paths, utils
 
 
@@ -49,7 +50,7 @@ def create_system_user(user=None, home=None):
         return False
 
 
-def change_owner(path, recursive=False, user=None):
+def change_owner(path, recursive=False, user=DeployUser):
     """
     Change the owner of a path.
 
@@ -59,9 +60,22 @@ def change_owner(path, recursive=False, user=None):
     :param user: name of the user to make owner; defaults to the deploy_user.
 
     """
-    if user is None:
-        user = env.deploy_user
-    utils.run_as('chown %s %s. %s' % ('-R' if recursive else '', user, path), use_sudo=True)
+    if hasattr(user, 'sudo_identity'):
+        user = user.sudo_identity()
+    utils.run_as('chown %s%s. %s' % ('-R ' if recursive else '', user, path), use_sudo=True)
+
+
+def change_mode(path, mode, recursive=False):
+    """
+    Change the mode of a path.
+
+    :param path: to change mode of.
+    :param mode: the mode to set in octal ie 0o755 .
+    :param recursive: if the path references a folder recurs through all sub
+        folders.
+
+    """
+    utils.run_as('chmod %s%o %s' % ('-R' if recursive else '', mode, path), use_sudo=True)
 
 
 def create_symlink(target_path, link_path, replace_existing=True, *args, **kwargs):
