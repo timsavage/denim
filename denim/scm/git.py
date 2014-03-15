@@ -1,5 +1,5 @@
 # -*- encoding:utf8 -*-
-from denim.utils import local
+from denim.utils import local, escape_string
 
 
 def commit(comment, file_name=None):
