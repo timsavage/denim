@@ -20,9 +20,9 @@ def join_paths(a, *p):
 
 ## Remote paths ##############
 
-def project_path(sub_path=None):
+def deploy_path(sub_path=None):
     """
-    Project root path on the remote host, this is the root path from which other paths are built.
+    Deploy root path on the remote host, this is the root path from which other paths are built.
 
     :param sub_path: A path below the package path.
 
@@ -31,7 +31,7 @@ def project_path(sub_path=None):
     project_path_root = env.get('project_path_prefix', '/opt')
     return join_paths(project_path_root, env.project_name, sub_path if sub_path else '')
 
-deploy_path = project_path
+project_path = deploy_path
 
 
 def release_path(revision=None, sub_path=None):
@@ -40,32 +40,34 @@ def release_path(revision=None, sub_path=None):
 
     Format of the release path:
 
-        PROJECT_PATH/releases/REVISION/SUB_PATH
+    >>> '%(DEPLOY_PATH)s/releases/%(REVISION)s/%(SUB_PATH)s'
 
     If a revision is not provided then the "current" path will be returned:
 
-        PROJECT_PATH/current/SUB_PATH
+    >>> '%(DEPLOY_PATH)s/current/%(SUB_PATH)s'
 
     :param revision: A specific revision name.
     :param sub_path: A path below the package path.
 
     """
-    if not revision:
+    if revision is None:
         revision = env.get('revision', None)
     if revision:
-        return project_path(join_paths('releases', revision, sub_path or ''))
+        return deploy_path(join_paths('releases', revision, sub_path or ''))
     else:
-        return project_path(join_paths('current', sub_path or ''))
+        return deploy_path(join_paths('current', sub_path or ''))
 
 
-def log_path():
+def log_path(sub_path=None):
     """
     Path where log files are located.
+
+    :param sub_path: A path below the package path.
 
     """
     require('project_name')
     log_path_root = env.get('log_path_prefix', '/var/log')
-    return join_paths(log_path_root, env.project_name)
+    return join_paths(log_path_root, env.project_name, sub_path or '')
 
 
 def wsgi_socket_path():
@@ -177,19 +179,19 @@ def _local_config_file_options(service_name, name_prefix=None, extension='.conf'
 
     Names of config files follow the following convention:
 
-      [
-        FABFILE_PATH/conf/SERVICE_NAME/ENVIRONMENT.EXTENSION,
-        FABFILE_PATH/conf/SERVICE_NAME.EXTENSION,
-      ]
+    >>> [
+    >>>     '%(FABFILE_PATH)s/conf/%(SERVICE_NAME)s/%(ENVIRONMENT)s.%(EXTENSION)s',
+    >>>     '%(FABFILE_PATH)s/conf/%(SERVICE_NAME)s.%(EXTENSION)s',
+    >>> ]
 
     or with a prefix:
 
-      [
-        FABFILE_PATH/conf/SERVICE_NAME/PREFIX-ENVIRONMENT.EXTENSION
-        FABFILE_PATH/conf/SERVICE_NAME/ENVIRONMENT.EXTENSION,
-        FABFILE_PATH/conf/PREFIX-SERVICE_NAME.EXTENSION,
-        FABFILE_PATH/conf/SERVICE_NAME.EXTENSION,
-      ]
+    >>> [
+    >>>     '%(FABFILE_PATH)s/conf/%(SERVICE_NAME)s/%(PREFIX)s-%(ENVIRONMENT)s.%(EXTENSION)s'
+    >>>     '%(FABFILE_PATH)s/conf/%(SERVICE_NAME)s/%(ENVIRONMENT.%(EXTENSION)s',
+    >>>     '%(FABFILE_PATH)s/conf/%(PREFIX)s-%(SERVICE_NAME.%(EXTENSION)s',
+    >>>     '%(FABFILE_PATH)s/conf/%(SERVICE_NAME)s.%(EXTENSION)s',
+    >>> ]
 
     """
     require('deploy_env')
@@ -232,7 +234,7 @@ Searched path(s): %s
 
 ## Context managers #########
 
-def cd_project(*args, **kwargs):
+def cd_deploy(*args, **kwargs):
     """
     Context manager to change to the *project_path*.
 
@@ -241,7 +243,7 @@ def cd_project(*args, **kwargs):
     """
     return cd(project_path(*args, **kwargs))
 
-cd_deploy = cd_project
+cd_project = cd_deploy
 
 
 def cd_release(*args, **kwargs):

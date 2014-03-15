@@ -61,7 +61,7 @@ def change_owner(path, recursive=False, user=DeployUser):
 
     """
     if hasattr(user, 'sudo_identity'):
-        user = user.sudo_identity()
+        user = user.sudo_identity() or 'root'
     utils.run_as('chown %s%s. %s' % ('-R ' if recursive else '', user, path), use_sudo=True)
 
 

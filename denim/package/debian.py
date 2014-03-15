@@ -20,4 +20,4 @@ def install(name):
     :param name: name of the package to install.
 
     """
-    utils.run_as('apt-get install "%s"' % name, use_sudo=True)
+    utils.run_as('apt-get -y install "%s"' % name, use_sudo=True)

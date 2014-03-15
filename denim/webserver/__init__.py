@@ -77,7 +77,7 @@ Reload web-server
 
 
 @__proxy.local_method
-def install_config(name_prefix=None, disable_on_fail=True, abort_on_fail=True):
+def install_config(name_prefix=None, disable_on_fail=True, abort_on_fail=True, use_reload=True):
     """
     Install/enable and test configuration.
 
@@ -89,7 +89,10 @@ def install_config(name_prefix=None, disable_on_fail=True, abort_on_fail=True):
     enable_config(name_prefix)
     result = test_config()
     if result:
-        reload(check_config=False)
+        if use_reload:
+            reload(check_config=False)
+        else:
+            restart(check_config=False)
     else:
         if disable_on_fail:
             disable_config(name_prefix)

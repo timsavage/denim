@@ -2,7 +2,7 @@ from fabric import api as _api
 
 # Setup some default values.
 _api.env.deploy_user = 'webapps'
-
+_api.env.forward_agent = True
 
 @_api.task(name="help")
 def show_help():
