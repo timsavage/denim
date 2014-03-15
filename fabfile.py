@@ -2,7 +2,7 @@ from fabric.api import *
 
 
 @task
-def test(with_coverage=False):
+def test(with_coverage=True):
     """
     Run denim unit tests. Pass True to enable coverage.
     """
