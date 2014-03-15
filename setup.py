@@ -1,6 +1,8 @@
 # coding=utf-8
 import os
+
 from setuptools import setup, find_packages
+
 import denim
 
 
@@ -13,7 +15,7 @@ setup(
     packages=find_packages(exclude=('tests', 'tests.*')),
     scripts=['bin/den'],
 
-    install_requires=['fabric'],
+    install_requires=['fabric', 'six'],
 
     package_data={
         'denim.scaffold': ['templates/*.txt', 'templates/*/*.txt'],
