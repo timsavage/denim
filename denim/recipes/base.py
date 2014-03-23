@@ -96,6 +96,7 @@ class ProvisionRecipeBase(RecipeBase):
         """
         packages = (check_optional_item(p) for p in self.required_packages)
         if self.install_missing_packages:
+            run_as("apt-get update", use_sudo=True, user=RootUser)
             package.ensure_installed(*packages)
         else:
             missing_packages = package.check_installed(*packages)
