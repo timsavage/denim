@@ -160,31 +160,46 @@ class DeployRecipeBase(RecipeBase):
         self.step_label('Restart the application.')
         self.restart(revision)
 
+    def get_deploy_cache_path(self, repository_name=None):
+        if repository_name is None:
+            repository_name = env.project_name
+        return paths.join_paths(self.deploy_cache_root, repository_name)
+
     @cached_property
     def deploy_cache_path(self):
-        return paths.join_paths(self.deploy_cache_root, env.project_name)
-
-    def pre_deployment(self, revision):
         """
-        Any tasks that need to be completed prior to deployment.
-
-        ie update git/hg cache, building deployment bundle, collect static files etc. Update S3...
+        Path to the current deployment repository cache (the git root).
         """
-        self.step_sub_label('Update deploy cache')
+        return self.get_deploy_cache_path()
 
+    def populate_git_cache(self, repository_name, repository_uri, revision):
+        """
+        Populate the local git cache
+        """
         if not exists(self.deploy_cache_root):
             run_as('mkdir -p %s' % self.deploy_cache_root)
 
-        if not exists(self.deploy_cache_path):
-            run_as('git clone %s %s' % (env.scm_repository, self.deploy_cache_path))
+        git_cache_path = self.get_deploy_cache_path(repository_name)
 
-        with cd(self.deploy_cache_path):
+        if not exists(git_cache_path):
+            run_as('git clone %s %s' % (repository_uri, git_cache_path))
+
+        with cd(git_cache_path):
             run_as('git pull')
 
             self.step_sub_label('Check requested revision is in place.')
             result = run_as('git tag | grep %s | wc -l' % revision)
             if result != '1':
-                abort('Could not find revision `%s` in deploy cache.' % revision)
+                abort('Could not find revision `%s` in deploy cache for %s.' % (revision, repository_name))
+
+    def pre_deployment(self, revision):
+        """
+        Any tasks that need to be completed prior to deployment.
+
+        ie update git cache, building deployment bundle, collect static files etc. Update S3...
+        """
+        self.step_sub_label('Update deploy cache')
+        self.populate_git_cache(env.project_name, env.scm_repository, revision)
 
     def deployment(self, revision):
         """
@@ -195,8 +210,8 @@ class DeployRecipeBase(RecipeBase):
         self.step_sub_label('Deploy revision into releases folder.')
         if not exists(paths.release_path(revision)):
             with cd(self.deploy_cache_path):
-                run_as('git archive --format=tar %s %s | tar -x -C %s' % (
-                    revision, 'app', paths.deploy_path('releases')), use_sudo=True)
+                run_as('git archive --format=tar %s app | tar -x -C %s' % (
+                    revision, paths.deploy_path('releases')), use_sudo=True)
             with paths.cd_deploy('releases'):
                 run_as('mv app %s' % revision, use_sudo=True)
 
