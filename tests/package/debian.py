@@ -12,4 +12,4 @@ class TestPackageDebian(ApiTestCase):
     def test_install(self):
         debian.install('python')
 
-        self.assertSudo('apt-get install "python"', user=RootUser)
+        self.assertSudo('apt-get -y install "python"', user=RootUser)
