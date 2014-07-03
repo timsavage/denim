@@ -5,7 +5,6 @@ import os
 from fabric.api import env, cd, require, abort
 
 
-
 ## Utils ####################
 
 def join_paths(a, *p):

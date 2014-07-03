@@ -1,12 +1,14 @@
 # -*- encoding:utf8 -*-
 import os
-
 from fabric.api import env, put, require
-
 from denim import paths, scm, utils
 
 
 __all__ = ('install_requirements', )
+
+
+def get_pip_cmd():
+    return 'pip%s' % env.python_version or 2
 
 
 def install_requirements(revision=None, path_to_requirements=None,
@@ -34,7 +36,7 @@ def install_requirements(revision=None, path_to_requirements=None,
     if not path_to_log:
         path_to_log = paths.project_path('var/pip.log')
     parameters.append('-r %s' % path_to_requirements)
-    utils.run_as('pip ' + ' '.join(parameters), use_sudo, user)
+    utils.run_as('%s %s' % (get_pip_cmd(), ' '.join(parameters)), use_sudo, user)
 
 
 def create_bundle_from_revision(revision, bundle_file=None):
@@ -59,7 +61,7 @@ def create_bundle_from_revision(revision, bundle_file=None):
     path_to_requirements = paths.local_working_path(file_name='%s-requirements.txt' % revision)
     scm.export_file(revision, 'app/requirements.txt', path_to_requirements)
 
-    utils.local('pip bundle -r %s %s' % (path_to_requirements, bundle_file))
+    utils.local('%s bundle -r %s %s' % (get_pip_cmd(), path_to_requirements, bundle_file))
     return bundle_file
 
 
@@ -76,4 +78,4 @@ def install_bundle(bundle_file, use_sudo=True, user=None):
     file_name = os.path.basename(bundle_file)
     remote_bundle = paths.join_paths('/tmp/', file_name)
     put(bundle_file, remote_bundle)
-    utils.run_as('pip install %s' % remote_bundle, use_sudo, user)
+    utils.run_as('%s install %s' % (get_pip_cmd(), remote_bundle), use_sudo, user)
