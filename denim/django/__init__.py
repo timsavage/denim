@@ -20,7 +20,7 @@ def manage(cmd, args=None, revision=None, noinput=True, use_sudo=True, user=Depl
     args.insert(0, cmd)
 
     with paths.cd_package(revision):
-        utils.run_as('python%s manage.py %s' % (env.python_version or 2, ' '.join(args)), use_sudo, user)
+        utils.run_as('python%s manage.py %s' % (env.get('python_version', 2), ' '.join(args)), use_sudo, user)
 
 
 def test_deploy(revision=None):

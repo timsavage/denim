@@ -72,7 +72,7 @@ class ProvisionRecipeBase(RecipeBase):
         ('{deploy_path}/releases', RootUser, 0o755),
         ('{deploy_path}/public', RootUser, 0o755),
         ('{deploy_path}/var', DeployUser, 0o755),
-        ('{log_path}', DeployUser, 0o750),
+        ('{log_path}', DeployUser, 0o755),
     ]
 
     def run(self):
@@ -210,11 +210,12 @@ class DeployRecipeBase(RecipeBase):
         """
         self.step_sub_label('Deploy revision into releases folder.')
         if not exists(paths.release_path(revision)):
+            local_src_root = env.get('local_src_root', 'src')
             with cd(self.deploy_cache_path):
-                run_as('git archive --format=tar %s app | tar -x -C %s' % (
-                    revision, paths.deploy_path('releases')), use_sudo=True)
+                run_as('git archive --format=tar %s %s | tar -x -C %s' % (
+                    revision, local_src_root, paths.deploy_path('releases')), use_sudo=True)
             with paths.cd_deploy('releases'):
-                run_as('mv app %s' % revision, use_sudo=True)
+                run_as('mv %s %s' % (local_src_root, revision), use_sudo=True)
 
     def update(self, revision):
         """

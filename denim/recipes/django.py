@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from fabric.operations import put
+from fabric.api import env, put
 
 from denim.constants import DeployUser, RootUser
 from denim import paths, webserver, service, django
@@ -38,7 +38,7 @@ class DeployDjangoRecipe(DeployRecipeBase):
         self.step_sub_label("Upload environment settings.")
         put(
             paths.local_config_file('app', extension='.py'),
-            paths.release_path(sub_path='ecologic/local_settings.py'),
+            paths.release_path(sub_path='%s/local_settings.py' % env.package_name),
             use_sudo=True
         )
 
@@ -55,4 +55,4 @@ class DeployDjangoRecipe(DeployRecipeBase):
         """
         self.step_sub_label('Running database migration.')
         with paths.cd_release(revision):
-            django.manage('syncdb', args=['--migrate'])
+            django.manage('syncdb')
