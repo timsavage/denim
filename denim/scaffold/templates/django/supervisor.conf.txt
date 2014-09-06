@@ -1,5 +1,5 @@
 [program:{{ project_name }}.gunicorn]
-command={{ deploy_path }}/bin/gunicorn_django --pid {{ deploy_path }}/var/gunicorn.pid --bind unix:{{ deploy_path }}/var/wsgi.sock --workers 8 --log-file {{ log_path }}/gunicorn.log
+command=gunicorn --bind unix:{{ deploy_path }}/var/wsgi.sock --workers 4 --log-file {{ log_path }}/gunicorn.log {{ package_name}}.wsgi:application
 directory={{ directory }}
 #environment=PATH="{{ deploy_path }}/bin/"
 process_name=%(program_name)s
