@@ -90,7 +90,7 @@ def generate_version(increment=None):
     version = date.today().strftime('%Y.%m.%d')
     if increment:
         try:
-            version += '.{0}'.format(int(increment))
+            version += 'r{0}'.format(int(increment))
         except ValueError:
             raise ValueError("Increment must be an integer value.")
     return version
