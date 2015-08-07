@@ -8,7 +8,7 @@ __all__ = ('install_requirements', )
 
 
 def get_pip_cmd():
-    return 'pip%s' % env.get('python_version', 2)
+    return 'pip%s' % env.get('python_version', '')
 
 
 def install_requirements(revision=None, path_to_requirements=None,
